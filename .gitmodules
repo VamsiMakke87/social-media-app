@@ -1,0 +1,3 @@
+[submodule "social-media-api"]
+	path = social-media-api
+	url = https://github.com/VamsiMakke87/social-media-api
