@@ -1,4 +1,3 @@
-[submodule "social-media-api"]
-	path = social-media-api
+[submodule "social-media-backend"]
+	path = social-media-backend
 	url = https://github.com/VamsiMakke87/social-media-api
-	branch = main
