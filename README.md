@@ -1,3 +1,3 @@
-# Social Media Frontend
+# Social Media App
 
 - This app is under development
