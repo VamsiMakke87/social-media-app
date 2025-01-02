@@ -64,7 +64,7 @@ const Navbar = () => {
             onClick={toggleProfile}
             className="relative"
           >
-            <AccountCircleIcon className="cursor-pointer"/>
+            <AccountCircleIcon className="cursor-pointer" />
             {profileMenuOpen && (
               <div className="absolute bg-white border rounded w-40 right-10 p-2 space-y-1 shadow-2xl">
                 <div className="px-4 py-2 cursor-pointer hover:bg-gray-100">

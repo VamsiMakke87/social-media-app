@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { FaRegComment } from "react-icons/fa";
+import Comments from "./Comment";
+import Comment from "./Comment";
 
 const Post = (props) => {
   const [liked, setLiked] = useState(false);
@@ -65,7 +67,9 @@ const Post = (props) => {
           <div className="pl-1">{post.comments.length}</div>
         </div>
       </div>
-      {commentClicked && <div className="mt-1 p-2 rounded bg-gray-200"> Comment section area</div>}
+      {commentClicked && <div className="mt-1 p-2 rounded bg-gray-200"> 
+        <Comment />
+        </div>}
     </div>
   );
 };
