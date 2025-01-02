@@ -23,7 +23,6 @@ const Post = (props) => {
       }));
     }
     setLiked(!liked);
-    
   };
 
   const toggleComment = () => {
@@ -41,36 +40,37 @@ const Post = (props) => {
       </div>
       <div className="my-2">{props.post.description}</div>
       <div className="my-2 justify-items-center">
-      {
-        props.post.image && 
-        <img
-          className="w-fit max-h-96 rounded "
-          src={props.post.image}
-          alt="Post content"
-        />
-      }
+        {props.post.image && (
+          <img
+            className="w-fit max-h-96 rounded"
+            src={props.post.image}
+            alt="Post content"
+          />
+        )}
       </div>
       <div className="justify-center flex">
-        <div className="w-1/3 flex cursor-pointer" onClick={toggleLike}>
-          <a >
+        <div className="w-1/3 flex ">
+          <a className="cursor-pointer" onClick={toggleLike}>
             {liked ? (
               <FavoriteIcon className="text-red-700" />
             ) : (
               <FavoriteBorderIcon />
             )}
           </a>
-          <div>{post.likes.length}</div>
+          <div className="cursor-context-menu">{post.likes.length}</div>
         </div>
-        <div  onClick={toggleComment}className="w-1/3 flex cursor-pointer">
-          <a>
-            <FaRegComment className="h-6 w-5 " />
+        <div className="w-1/3 flex">
+          <a className="cursor-pointer" onClick={toggleComment}>
+            <FaRegComment className="h-6 w-5" />
           </a>
-          <div className="pl-1">{post.comments.length}</div>
+          <div className="pl-1 cursor-context-menu">{post.comments.length}</div>
         </div>
       </div>
-      {commentClicked && <div className="mt-1 p-2 rounded bg-gray-200"> 
-        <Comment />
-        </div>}
+      {commentClicked && (
+        <div className="mt-1 p-2 rounded bg-gray-200">
+          <Comment />
+        </div>
+      )}
     </div>
   );
 };
