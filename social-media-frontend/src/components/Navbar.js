@@ -15,7 +15,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="p-4 h-20 flex items-center shadow-xl">
+      <div className="p-4 h-20 sticky top-0 bg-white flex items-center shadow-xl">
         <div className="w-1/5">
           <Link className="text-2xl font-extrabold" to="/">
             VamsiMakke
