@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
@@ -8,9 +8,22 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileRef = useRef();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const toggleProfile = () => {
+    setProfileMenuOpen(!profileMenuOpen);
+  };
+
+  const handleBlur = (event) => {
+    console.log("blur");
+    if (!profileRef.current.contains(event.relatedTarget)) {
+      setProfileMenuOpen(false);
+    }
   };
 
   return (
@@ -42,9 +55,30 @@ const Navbar = () => {
           </Link>
           <NotificationsIcon />
           {/* <Link to="/post">Posts</Link> */}
-          <Link to="/profile">
-            <AccountCircleIcon />
-          </Link>
+
+          <div
+            tabIndex={0}
+            ref={profileRef}
+            onBlur={handleBlur}
+            className="cursor-pointer"
+            onClick={toggleProfile}
+            className="relative"
+          >
+            <AccountCircleIcon className="cursor-pointer"/>
+            {profileMenuOpen && (
+              <div className="absolute bg-white border rounded w-40 right-10 p-2 space-y-1 shadow-2xl">
+                <div className="px-4 py-2 cursor-pointer hover:bg-gray-100">
+                  <Link to="/profile">Profile</Link>
+                </div>
+                <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  <Link to="/settings">Settings</Link>
+                </div>
+                <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  <Link to="/logout">Logout</Link>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="md:hidden">

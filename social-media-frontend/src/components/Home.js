@@ -6,7 +6,6 @@ const Home = () => {
   const { posts, setPosts } = useContext(AppContext);
   useEffect(() => {
     setPosts(posts1);
-    console.log(posts);
   }, []);
   const posts1 = [
     {
@@ -15,6 +14,7 @@ const Home = () => {
       userId: "676e901b1bed623ed0b87cd6",
       description: "Wassup ma boisss",
       likes: [],
+      image:"https://fcb-abj-pre.s3.amazonaws.com/img/jugadors/MESSI.jpg",
       createdAt: "2024-12-27T12:56:36.261Z",
       updatedAt: "2024-12-27T12:56:36.261Z",
       __v: 0,
@@ -24,6 +24,7 @@ const Home = () => {
       userId: "676e93804f9a0770ce6e4c91",
       description: "Wassup",
       likes: [],
+      image: "https://cdn.britannica.com/34/212134-050-A7289400/Lionel-Messi-2018.jpg",
       createdAt: "2024-12-27T12:50:43.870Z",
       updatedAt: "2024-12-27T17:04:38.321Z",
       __v: 0,
