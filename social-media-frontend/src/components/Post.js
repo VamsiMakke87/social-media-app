@@ -23,6 +23,7 @@ const Post = (props) => {
       }));
     }
     setLiked(!liked);
+    
   };
 
   const toggleComment = () => {

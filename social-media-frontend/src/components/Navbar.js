@@ -71,7 +71,7 @@ const Navbar = () => {
                   <Link to="/profile">Profile</Link>
                 </div>
                 <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  <Link to="/settings">Settings</Link>
+                  <Link to="/settings">Settings</Link> 
                 </div>
                 <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   <Link to="/logout">Logout</Link>
