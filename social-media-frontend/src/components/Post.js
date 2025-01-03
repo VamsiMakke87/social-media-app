@@ -14,6 +14,7 @@ const Post = (props) => {
   const [liked, setLiked] = useState(
     props.post.likes.includes(loggedInUser._id)
   );
+  const [commentCursor, setCommentCursor] = useState("cursor-pointer");
   const [commentClicked, setCommentClicked] = useState(false);
   const [post, setPost] = useState(props.post);
   const [comments, setComments] = useState([]);
@@ -45,6 +46,10 @@ const Post = (props) => {
     const jsonData = await res.json();
     // console.log
     setComments(jsonData);
+    setPost((prev) => ({
+      ...prev,
+      comments:jsonData,
+    }));
   };
 
   const toggleComment = async () => {
@@ -62,10 +67,13 @@ const Post = (props) => {
         postId: post._id,
         description: comment,
       };
+      setCommentCursor("cursor-wait");
       const res = await postReq("http://localhost:8800/api/comment/", data);
       await loadComments();
+      setCommentCursor("cursor-pointer");
     }
     commentRef.current.value = "";
+    setCommentClicked(true);
   };
 
   return (
@@ -101,7 +109,7 @@ const Post = (props) => {
           <div className="cursor-context-menu">{post.likes.length}</div>
         </div>
         <div className="w-1/3 flex">
-          <a className="cursor-pointer" onClick={toggleComment}>
+          <a className={commentCursor} onClick={toggleComment}>
             <FaRegComment className="h-6 w-5" />
           </a>
           <div className="pl-1 cursor-context-menu">{post.comments.length}</div>

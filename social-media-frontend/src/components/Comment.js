@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { FaRegComment } from "react-icons/fa";
+import { formatDistanceToNow } from "date-fns";
 
 const Comment = (props) => {
   const [liked, setLiked] = useState(false);
@@ -17,14 +18,18 @@ const Comment = (props) => {
 
   return (
     <div className="mt-1 p-2 rounded border bg-gray-100">
-      <div className="flex space-x-1">
-        <img
-          className="h-6 w-6 rounded-full"
-          src={props.comment.profilePic}
-        />
-        <div className="font-semibold">{props.comment.username}</div>
+      <div className="flex  space-x-1">
+        <img className="h-9 w-9 rounded-full" src={props.comment.profilePic} />
+        <div>
+          <div className="text-sm font-semibold">{props.comment.username}</div>
+          <div className="text-xs font-normal">
+            {formatDistanceToNow(new Date(props.comment.createdAt), {
+              addSuffix: true,
+            })}
+          </div>
+        </div>
       </div>
-      <div className="flex">
+      <div className="flex ">
         <div className="text-sm">{props.comment.description}</div>
         <div className="ml-auto flex">
           <div className="flex mr-2">
