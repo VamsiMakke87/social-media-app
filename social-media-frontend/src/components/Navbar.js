@@ -37,7 +37,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center border-black rounded border-2 w-1/2 mr-4">
           <SearchIcon className=" border-black " />
           <input
-            className="appearance-non w-full  rounded  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white"
+            className="appearance-none w-full  rounded  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white"
             type="text"
             placeholder="Enter Username"
           />

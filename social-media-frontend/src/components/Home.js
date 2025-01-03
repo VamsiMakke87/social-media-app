@@ -6,7 +6,6 @@ const Home = () => {
   const { posts, setPosts, loggedInUser, getReq, postReq, putReq, delReq } =
     useContext(AppContext);
   useEffect(() => {
-    console.log("hi");
     const loadFeed = async () => {
       await loadPosts();
     };

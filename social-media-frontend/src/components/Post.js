@@ -1,14 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { formatDistanceToNow } from "date-fns";
 import { FaRegComment } from "react-icons/fa";
 import Comment from "./Comment";
 import AppContext from "../AppContext";
+import SendIcon from "@mui/icons-material/Send";
 
 const Post = (props) => {
   const { loggedInUser, getReq, postReq, putReq, delReq } =
     useContext(AppContext);
+  const commentRef = useRef();
   const [liked, setLiked] = useState(
     props.post.likes.includes(loggedInUser._id)
   );
@@ -29,24 +31,41 @@ const Post = (props) => {
       }));
     }
 
+    setLiked(!liked);
     const like = await putReq(
       `http://localhost:8800/api/posts/like/${post._id}`,
       { userId: loggedInUser._id }
     );
+  };
 
-    setLiked(!liked);
+  const loadComments = async () => {
+    const res = await getReq(
+      `http://localhost:8800/api/comment/all/${post._id}`
+    );
+    const jsonData = await res.json();
+    // console.log
+    setComments(jsonData);
   };
 
   const toggleComment = async () => {
     if (!commentClicked) {
-      const res = await getReq(
-        `http://localhost:8800/api/comment/all/${post._id}`
-      );
-      const jsonData = await res.json();
-      // console.log
-      setComments(jsonData);
+      await loadComments();
     }
     setCommentClicked(!commentClicked);
+  };
+
+  const addComment = async () => {
+    const comment = commentRef.current.value;
+    if (comment) {
+      const data = {
+        userId: loggedInUser._id,
+        postId: post._id,
+        description: comment,
+      };
+      const res = await postReq("http://localhost:8800/api/comment/", data);
+      await loadComments();
+    }
+    commentRef.current.value = "";
   };
 
   return (
@@ -100,6 +119,17 @@ const Post = (props) => {
             No comments posted yet
           </div>
         ))}
+      <div className="mt-2">
+        <input
+          type="text"
+          ref={commentRef}
+          className="h-fit w-11/12 outline-none"
+          placeholder="Add a comment"
+        />
+        <a className="cursor-pointer ml-auto" onClick={addComment}>
+          <SendIcon />
+        </a>
+      </div>
     </div>
   );
 };
