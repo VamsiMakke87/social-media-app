@@ -1,46 +1,68 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { formatDistanceToNow } from "date-fns";
 import { FaRegComment } from "react-icons/fa";
-import Comments from "./Comment";
 import Comment from "./Comment";
+import AppContext from "../AppContext";
 
 const Post = (props) => {
-  const [liked, setLiked] = useState(false);
+  const { loggedInUser, getReq, postReq, putReq, delReq } =
+    useContext(AppContext);
+  const [liked, setLiked] = useState(
+    props.post.likes.includes(loggedInUser._id)
+  );
   const [commentClicked, setCommentClicked] = useState(false);
   const [post, setPost] = useState(props.post);
+  const [comments, setComments] = useState([]);
 
-  const toggleLike = () => {
+  const toggleLike = async () => {
     if (!liked) {
       setPost((prev) => ({
         ...prev,
-        likes: [...prev.likes, 123],
+        likes: [...prev.likes, loggedInUser._id],
       }));
     } else {
       setPost((prev) => ({
         ...prev, // Spread the previous state
-        likes: prev.likes.filter((like) => like !== 123), // Update the likes array by adding 1
+        likes: prev.likes.filter((like) => like !== loggedInUser._id), // Update the likes array by adding 1
       }));
     }
+
+    const like = await putReq(
+      `http://localhost:8800/api/posts/like/${post._id}`,
+      { userId: loggedInUser._id }
+    );
+
     setLiked(!liked);
   };
 
-  const toggleComment = () => {
+  const toggleComment = async () => {
+    if (!commentClicked) {
+      const res = await getReq(
+        `http://localhost:8800/api/comment/all/${post._id}`
+      );
+      const jsonData = await res.json();
+      // console.log
+      setComments(jsonData);
+    }
     setCommentClicked(!commentClicked);
   };
 
   return (
-    <div className=" rounded p-5 w-10/12 md:w-6/12 shadow-md">
+    <div className=" rounded p-5 w-10/12 border md:w-6/12 bg-white m-2 shadow-md">
       <div className="flex items-center">
-        <img
-          className="rounded-full mr-1 h-10 w-10"
-          src="https://cdn.britannica.com/34/212134-050-A7289400/Lionel-Messi-2018.jpg"
-        />
-        <a className="font-semibold">{post.userId}</a>
+        <img className="rounded-full mr-1 h-10 w-10" src={post.profilePic} />
+        <div>
+          <a className="font-semibold">{post.username}</a>
+          <div className="text-xs font-normal">
+            {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+          </div>
+        </div>
       </div>
-      <div className="my-2">{props.post.description}</div>
+      <div className="my-2">{post.description}</div>
       <div className="my-2 justify-items-center">
-        {props.post.image && (
+        {post.image && (
           <img
             className="w-fit max-h-96 rounded"
             src={props.post.image}
@@ -66,11 +88,18 @@ const Post = (props) => {
           <div className="pl-1 cursor-context-menu">{post.comments.length}</div>
         </div>
       </div>
-      {commentClicked && (
-        <div className="mt-1 p-2 rounded bg-gray-200">
-          <Comment />
-        </div>
-      )}
+      {commentClicked &&
+        (comments.length > 0 ? (
+          <div>
+            {comments.map((comment, index) => (
+              <Comment key={index} comment={comment} />
+            ))}
+          </div>
+        ) : (
+          <div className=" mt-1 p-2 border rounded bg-gray-100">
+            No comments posted yet
+          </div>
+        ))}
     </div>
   );
 };
