@@ -37,7 +37,7 @@ const Home = () => {
   };
 
   return (
-    <div className=" bg-gray-200  justify-items-center">
+    <div className=" bg-slate-50  justify-items-center">
       <div className=" rounded p-5 h-60 w-10/12 border md:w-6/12 bg-white m-2 shadow-md justify-items-start resize-none">
         <div className=" w-full h-5/6">
           <textarea
