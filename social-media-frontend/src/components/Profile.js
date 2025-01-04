@@ -92,13 +92,13 @@ const Profile = () => {
             </div>
           </div>
           {loggedInUser._id === user._id ? (
-            <div className="border p-2 px-8 rounded-md border-black hover:bg-black hover:text-white cursor-pointer">
+            <div className="border p-2 mt-1 px-8 rounded-md border-black hover:bg-black hover:text-white cursor-pointer">
               Edit Profile
             </div>
           ) : (
             <div
               onClick={toggleFollow}
-              className="border p-2 px-8 rounded-md border-black  cursor-pointer"
+              className="border p-2 mt-1 px-8 rounded-md border-black  cursor-pointer"
             >
               {followText ? <>Unfollow</> : <>Follow</>}
             </div>
