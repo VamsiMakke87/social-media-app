@@ -20,36 +20,41 @@ const Post = (props) => {
   const [comments, setComments] = useState([]);
 
   const toggleLike = async () => {
-    if (!liked) {
-      setPost((prev) => ({
-        ...prev,
-        likes: [...prev.likes, loggedInUser._id],
-      }));
-    } else {
-      setPost((prev) => ({
-        ...prev, // Spread the previous state
-        likes: prev.likes.filter((like) => like !== loggedInUser._id), // Update the likes array by adding 1
-      }));
-    }
-
-    setLiked(!liked);
-    const like = await putReq(
+    const res = await putReq(
       `http://localhost:8800/api/posts/like/${post._id}`,
       { userId: loggedInUser._id }
     );
+
+    if (res.ok) {
+      if (!liked) {
+        setPost((prev) => ({
+          ...prev,
+          likes: [...prev.likes, loggedInUser._id],
+        }));
+      } else {
+        setPost((prev) => ({
+          ...prev,
+          likes: prev.likes.filter((like) => like !== loggedInUser._id),
+        }));
+      }
+
+      setLiked(!liked);
+    }
   };
 
   const loadComments = async () => {
     const res = await getReq(
       `http://localhost:8800/api/comment/all/${post._id}`
     );
-    const jsonData = await res.json();
-    // console.log
-    setComments(jsonData);
-    setPost((prev) => ({
-      ...prev,
-      comments:jsonData,
-    }));
+    if (res.ok) {
+      const jsonData = await res.json();
+      setComments(jsonData);
+      setPost((prev) => ({
+        ...prev,
+        comments: jsonData,
+      }));
+      console.log(comments,',',post.comments);
+    }
   };
 
   const toggleComment = async () => {
@@ -69,7 +74,7 @@ const Post = (props) => {
       };
       setCommentCursor("cursor-wait");
       const res = await postReq("http://localhost:8800/api/comment/", data);
-      await loadComments();
+      if (res.ok) await loadComments();
       setCommentCursor("cursor-pointer");
     }
     commentRef.current.value = "";
@@ -79,7 +84,7 @@ const Post = (props) => {
   return (
     <div className=" rounded p-5 w-10/12 border md:w-6/12 bg-white m-2 shadow-md">
       <div className="flex items-center">
-        <img className="rounded-full mr-1 h-10 w-10" src={post.profilePic} />
+        <img className="rounded-full mr-1 h-11 w-11" src={post.profilePic} />
         <div>
           <a className="font-semibold">{post.username}</a>
           <div className="text-xs font-normal">
@@ -118,8 +123,8 @@ const Post = (props) => {
       {commentClicked &&
         (comments.length > 0 ? (
           <div>
-            {comments.map((comment, index) => (
-              <Comment key={index} comment={comment} />
+            {comments.map((comment) => (
+              <Comment key={comment._id} comment={comment} setCommentClicked={setCommentClicked}/>
             ))}
           </div>
         ) : (
@@ -127,7 +132,7 @@ const Post = (props) => {
             No comments posted yet
           </div>
         ))}
-      <div className="mt-2">
+      <div className="mt-2 flex">
         <input
           type="text"
           ref={commentRef}

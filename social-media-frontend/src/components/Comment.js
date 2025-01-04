@@ -1,60 +1,142 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { FaRegComment } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
+import Replies from "./Replies";
+import AppContext from "../AppContext";
+import SendIcon from "@mui/icons-material/Send";
 
 const Comment = (props) => {
-  const [liked, setLiked] = useState(false);
+  const { getReq, postReq, putReq, delReq, loggedInUser } =
+    useContext(AppContext);
+  const replyRef = useRef();
+  const [comment, setComment] = useState(props.comment);
+  const [liked, setLiked] = useState(
+    props.comment.likes.includes(loggedInUser._id)
+  );
+  const [replies, setReplies] = useState([]);
   const [replyClicked, setReplyClicked] = useState(false);
 
-  const toggleLike = () => {
-    setLiked(!liked);
+  const toggleLike = async() => {
+
+    const res=await putReq(`http://localhost:8800/api/comment/like/${comment._id}`,{userId: loggedInUser._id});
+
+    if(res.ok){
+      if (!liked) {
+        setComment((prev) => ({
+          ...prev,
+          likes: [...prev.likes, loggedInUser._id],
+        }));
+      } else {
+        setComment((prev) => ({
+          ...prev,
+          likes: prev.likes.filter((like) => like !== loggedInUser._id),
+        }));
+      }
+      setLiked(!liked);
+    }
   };
 
-  const toggleReply = () => {
+  const toggleReply = async () => {
+    if (!replyClicked) await loadReplies();
     setReplyClicked(!replyClicked);
   };
 
+  const loadReplies = async () => {
+    const res = await getReq(
+      `http://localhost:8800/api/comment/reply/all/${props.comment._id}`
+    );
+
+    if (res.ok) {
+      const jsonData = await res.json();
+      setReplies(jsonData);
+      setComment((prev) => ({
+        ...prev,
+        replies: jsonData,
+      }));
+    }
+  };
+
+  
+
+  const addReply = async () => {
+    const reply = replyRef.current.value;
+    if (reply) {
+      const data = {
+        userId: loggedInUser._id,
+        commentId: comment._id,
+        description: reply,
+      };
+     
+      const res = await postReq("http://localhost:8800/api/comment/reply", data);
+      if (res.ok) await loadReplies();
+    }
+    replyRef.current.value = "";
+    setReplyClicked(true);
+  };
+
   return (
-    <div className="mt-1 p-2 rounded border bg-gray-100">
-      <div className="flex  space-x-1">
-        <img className="h-9 w-9 rounded-full" src={props.comment.profilePic} />
+    <div className="mt-1 p-2 rounded border  bg-gray-100">
+      <div className="flex  space-x-1 items-center">
+        <img className="h-10 w-10 rounded-full" src={comment.profilePic} />
         <div>
-          <div className="text-sm font-semibold">{props.comment.username}</div>
+          <div className="text-sm font-semibold">{comment.username}</div>
           <div className="text-xs font-normal">
-            {formatDistanceToNow(new Date(props.comment.createdAt), {
+            {formatDistanceToNow(new Date(comment.createdAt), {
               addSuffix: true,
             })}
           </div>
         </div>
       </div>
-      <div className="flex ">
-        <div className="text-sm">{props.comment.description}</div>
-        <div className="ml-auto flex">
-          <div className="flex mr-2">
-            <a className="cursor-pointer" onClick={toggleLike}>
+      <div className="flex items-center">
+        <div className="text-sm">{comment.description}</div>
+        <div className="ml-auto flex items-center">
+          <div className="flex mr-2 items-center">
+            <div className="cursor-pointer" onClick={toggleLike}>
               {liked ? (
-                <FavoriteIcon className="text-red-700" />
+                <FavoriteIcon fontSize="small" className=" text-red-700" />
               ) : (
-                <FavoriteBorderIcon />
+                <FavoriteBorderIcon fontSize="small" />
               )}
-            </a>
-            <div className="cursor-context-menu">
-              {props.comment.likes.length}
+            </div>
+            <div className="cursor-context-menu text-sm">
+              {comment.likes.length}
             </div>
           </div>
         </div>
-        <div className="flex">
+        <div className="flex items-center">
           <a className="cursor-pointer" onClick={toggleReply}>
-            <FaRegComment className="h-6 w-5" />
+            <FaRegComment className="h-4 w-4" />
           </a>
-          <div className="pl-1 cursor-context-menu">
-            {props.comment.replies.length}
-          </div>
+          <div className="ml-0.5 text-sm">{comment.replies.length}</div>
         </div>
       </div>
-      {replyClicked && <div className="bg-gray-200 p-2 rounded">reply</div>}
+      {replyClicked &&
+        (replies.length > 0 ? (
+          <div>
+            {replies.map((reply) => (
+              <Replies key={reply._id} reply={reply} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-gray-200 border p-2 rounded">
+            No replies posted
+          </div>
+        ))}
+      {replyClicked && (
+        <div className="mt-2 flex">
+          <input
+            type="text"
+            ref={replyRef}
+            className="h-fit w-11/12 outline-none bg-transparent"
+            placeholder="Add reply"
+          />
+          <a className="cursor-pointer ml-auto" onClick={addReply}>
+            <SendIcon fontSize="small"/>
+          </a>
+        </div>
+      )}
     </div>
   );
 };
