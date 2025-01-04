@@ -24,7 +24,9 @@ const Post = (props) => {
   const [deletePostMenu, setDeletePostMenu] = useState(false);
 
   useEffect(() => {
-    loadComments();
+    (async () => {
+      await loadComments();
+    })();
   }, []);
 
   const toggleLike = async () => {

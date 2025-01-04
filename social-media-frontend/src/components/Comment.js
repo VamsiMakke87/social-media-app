@@ -24,7 +24,9 @@ const Comment = (props) => {
 
 
   useEffect(()=>{
-    loadReplies();
+    (async () => {
+      await loadReplies();
+    })();
   },[]);
 
   const toggleLike = async () => {
