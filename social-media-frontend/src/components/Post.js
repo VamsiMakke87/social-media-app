@@ -23,6 +23,10 @@ const Post = (props) => {
   const postMenuRef = useRef();
   const [deletePostMenu, setDeletePostMenu] = useState(false);
 
+  useEffect(() => {
+    loadComments();
+  }, []);
+
   const toggleLike = async () => {
     const res = await putReq(
       `http://localhost:8800/api/posts/like/${post._id}`,
@@ -57,7 +61,6 @@ const Post = (props) => {
         ...prev,
         comments: jsonData,
       }));
-      console.log(comments, ",", post.comments);
     }
   };
 
@@ -80,13 +83,14 @@ const Post = (props) => {
       const res = await postReq("http://localhost:8800/api/comment/", data);
       if (res.ok) await loadComments();
       setCommentCursor("cursor-pointer");
+      commentRef.current.value = "";
+      setCommentClicked(true);
     }
-    commentRef.current.value = "";
-    setCommentClicked(true);
   };
 
-  const toggleMenuOpen = () => {
+  const togglePostMenuOpen = () => {
     setPostMenuOpen(!postMenuOpen);
+    setDeletePostMenu(false);
   };
 
   const postMenuBlur = (event) => {
@@ -96,9 +100,6 @@ const Post = (props) => {
     }
   };
 
-  const toggleDeletePostMenu = () => {
-    setDeletePostMenu(true);
-  };
 
   const deletePost = async () => {
     const res = await delReq(`http://localhost:8800/api/posts/${post._id}`, {
@@ -127,8 +128,8 @@ const Post = (props) => {
               ref={postMenuRef}
               onBlur={postMenuBlur}
             >
-              <div onClick={toggleMenuOpen} className="cursor-pointer ">
-                <MoreVertOutlinedIcon  />
+              <div onClick={togglePostMenuOpen} className="cursor-pointer ">
+                <MoreVertOutlinedIcon />
               </div>
               {postMenuOpen && (
                 <div className="absolute p-2 text-sm justify-center border rounded bg-white shadow-md h-18 w-fit top-3 right-3">
@@ -138,8 +139,20 @@ const Post = (props) => {
                         Do&nbsp;you&nbsp;want&nbsp;to&nbsp;delete&nbsp;the&nbsp;post?
                       </div>
                       <div className="flex">
-                        <button onClick={deletePost} className="border-black border m-1 p-2 w-1/2 hover:bg-black hover:text-white">Yes</button>
-                        <button onClick={()=>{setDeletePostMenu(false)}} className="border border-black m-1 p-2 w-1/2 hover:bg-black hover:text-white">No</button>
+                        <button
+                          onClick={deletePost}
+                          className="border-black border m-1 p-2 w-1/2 hover:bg-black hover:text-white"
+                        >
+                          Yes
+                        </button>
+                        <button
+                          onClick={() => {
+                            setDeletePostMenu(false);
+                          }}
+                          className="border border-black m-1 p-2 w-1/2 hover:bg-black hover:text-white"
+                        >
+                          No
+                        </button>
                       </div>
                     </div>
                   ) : (
@@ -148,7 +161,7 @@ const Post = (props) => {
                         Edit
                       </div>
                       <div
-                        onClick={toggleDeletePostMenu}
+                        onClick={()=>{setDeletePostMenu(true)}}
                         className="p-2 hover:bg-gray-100 cursor-pointer rounded"
                       >
                         Delete
@@ -196,7 +209,7 @@ const Post = (props) => {
               <Comment
                 key={comment._id}
                 comment={comment}
-                setCommentClicked={setCommentClicked}
+                loadComments={loadComments}
               />
             ))}
           </div>

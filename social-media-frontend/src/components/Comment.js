@@ -6,6 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import Replies from "./Replies";
 import AppContext from "../AppContext";
 import SendIcon from "@mui/icons-material/Send";
+import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 
 const Comment = (props) => {
   const { getReq, postReq, putReq, delReq, loggedInUser } =
@@ -17,12 +18,17 @@ const Comment = (props) => {
   );
   const [replies, setReplies] = useState([]);
   const [replyClicked, setReplyClicked] = useState(false);
+  const commentMenuRef = useRef();
+  const [commentMenuOpen, setCommentMenuOpen] = useState(false);
+  const [deleteCommentMenu, setDeleteCommentMenu] = useState(false);
 
-  const toggleLike = async() => {
+  const toggleLike = async () => {
+    const res = await putReq(
+      `http://localhost:8800/api/comment/like/${comment._id}`,
+      { userId: loggedInUser._id }
+    );
 
-    const res=await putReq(`http://localhost:8800/api/comment/like/${comment._id}`,{userId: loggedInUser._id});
-
-    if(res.ok){
+    if (res.ok) {
       if (!liked) {
         setComment((prev) => ({
           ...prev,
@@ -45,7 +51,7 @@ const Comment = (props) => {
 
   const loadReplies = async () => {
     const res = await getReq(
-      `http://localhost:8800/api/comment/reply/all/${props.comment._id}`
+      `http://localhost:8800/api/comment/reply/all/${comment._id}`
     );
 
     if (res.ok) {
@@ -58,8 +64,6 @@ const Comment = (props) => {
     }
   };
 
-  
-
   const addReply = async () => {
     const reply = replyRef.current.value;
     if (reply) {
@@ -68,26 +72,109 @@ const Comment = (props) => {
         commentId: comment._id,
         description: reply,
       };
-     
-      const res = await postReq("http://localhost:8800/api/comment/reply", data);
+
+      const res = await postReq(
+        "http://localhost:8800/api/comment/reply",
+        data
+      );
       if (res.ok) await loadReplies();
     }
     replyRef.current.value = "";
     setReplyClicked(true);
   };
 
+  const toggleCommentMenuOpen = () => {
+    setCommentMenuOpen(!commentMenuOpen);
+    setDeleteCommentMenu(false);
+  };
+
+  const commentMenuBlur = (event) => {
+    if (!commentMenuRef.current.contains(event.relatedTarget)) {
+      setCommentMenuOpen(false);
+      setDeleteCommentMenu(false);
+    }
+  };
+
+  const deleteComment = async () => {
+    const res = await delReq(
+      `http://localhost:8800/api/comment/${comment._id}`,
+      {
+        userId: loggedInUser._id,
+      }
+    );
+    if (res.ok) {
+      await props.loadComments();
+    }
+  };
   return (
     <div className="mt-1 p-2 rounded border  bg-gray-100">
-      <div className="flex  space-x-1 items-center">
-        <img className="h-10 w-10 rounded-full" src={comment.profilePic} />
-        <div>
-          <div className="text-sm font-semibold">{comment.username}</div>
-          <div className="text-xs font-normal">
-            {formatDistanceToNow(new Date(comment.createdAt), {
-              addSuffix: true,
-            })}
+      <div className="flex">
+        <div className="flex  space-x-1 items-center">
+          <img className="h-10 w-10 rounded-full" src={comment.profilePic} />
+          <div>
+            <div className="text-sm font-semibold">{comment.username}</div>
+            <div className="text-xs font-normal">
+              {formatDistanceToNow(new Date(comment.createdAt), {
+                addSuffix: true,
+              })}
+            </div>
           </div>
         </div>
+        {comment.userId === loggedInUser._id && (
+          <div className="ml-auto">
+            <div
+              className="relative"
+              tabIndex={0}
+              ref={commentMenuRef}
+              onBlur={commentMenuBlur}
+            >
+              <div onClick={toggleCommentMenuOpen} className="cursor-pointer ">
+                <MoreVertOutlinedIcon />
+              </div>
+              {commentMenuOpen && (
+                <div className="absolute p-2 text-sm justify-center border rounded bg-white shadow-md h-18 w-fit top-3 right-3">
+                  {deleteCommentMenu ? (
+                    <div>
+                      <div>
+                        Do&nbsp;you&nbsp;want&nbsp;to&nbsp;delete&nbsp;the&nbsp;comment?
+                      </div>
+                      <div className="flex">
+                        <button
+                          onClick={deleteComment}
+                          className="border-black border m-1 p-2 w-1/2 hover:bg-black hover:text-white"
+                        >
+                          Yes
+                        </button>
+                        <button
+                          onClick={() => {
+                            setDeleteCommentMenu(false);
+                          }}
+                          className="border border-black m-1 p-2 w-1/2 hover:bg-black hover:text-white"
+                        >
+                          No
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="p-2 hover:bg-gray-100 flex justify-items-center cursor-pointer rounded">
+                        Edit
+                      </div>
+                      <div
+                        onClick={() => {
+                          setDeleteCommentMenu(true);
+                        }}
+                        className="p-2 hover:bg-gray-100 cursor-pointer rounded"
+                      >
+                        Delete
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
       <div className="flex items-center">
         <div className="text-sm">{comment.description}</div>
@@ -133,7 +220,7 @@ const Comment = (props) => {
             placeholder="Add reply"
           />
           <a className="cursor-pointer ml-auto" onClick={addReply}>
-            <SendIcon fontSize="small"/>
+            <SendIcon fontSize="small" />
           </a>
         </div>
       )}
