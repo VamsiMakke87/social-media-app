@@ -62,7 +62,6 @@ const Navbar = () => {
             className="cursor-pointer"
             onClick={toggleProfile}
             className="relative "
-            
           >
             <AccountCircleIcon className="cursor-pointer" />
             {profileMenuOpen && (

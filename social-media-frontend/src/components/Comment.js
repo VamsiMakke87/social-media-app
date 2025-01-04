@@ -22,6 +22,11 @@ const Comment = (props) => {
   const [commentMenuOpen, setCommentMenuOpen] = useState(false);
   const [deleteCommentMenu, setDeleteCommentMenu] = useState(false);
 
+
+  useEffect(()=>{
+    loadReplies();
+  },[]);
+
   const toggleLike = async () => {
     const res = await putReq(
       `http://localhost:8800/api/comment/like/${comment._id}`,
@@ -67,6 +72,7 @@ const Comment = (props) => {
   const addReply = async () => {
     const reply = replyRef.current.value;
     if (reply) {
+      replyRef.current.value = "";
       const data = {
         userId: loggedInUser._id,
         commentId: comment._id,
@@ -79,7 +85,6 @@ const Comment = (props) => {
       );
       if (res.ok) await loadReplies();
     }
-    replyRef.current.value = "";
     setReplyClicked(true);
   };
 
@@ -156,18 +161,13 @@ const Comment = (props) => {
                       </div>
                     </div>
                   ) : (
-                    <div>
-                      <div className="p-2 hover:bg-gray-100 flex justify-items-center cursor-pointer rounded">
-                        Edit
-                      </div>
-                      <div
-                        onClick={() => {
-                          setDeleteCommentMenu(true);
-                        }}
-                        className="p-2 hover:bg-gray-100 cursor-pointer rounded"
-                      >
-                        Delete
-                      </div>
+                    <div
+                      onClick={() => {
+                        setDeleteCommentMenu(true);
+                      }}
+                      className="p-2 h-fit pr-8 hover:bg-gray-100 cursor-pointer rounded"
+                    >
+                      Delete
                     </div>
                   )}
                 </div>
@@ -203,7 +203,11 @@ const Comment = (props) => {
         (replies.length > 0 ? (
           <div>
             {replies.map((reply) => (
-              <Replies key={reply._id} reply={reply} />
+              <Replies
+                key={reply._id}
+                reply={reply}
+                loadReplies={loadReplies}
+              />
             ))}
           </div>
         ) : (

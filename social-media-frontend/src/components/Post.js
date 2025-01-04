@@ -74,6 +74,7 @@ const Post = (props) => {
   const addComment = async () => {
     const comment = commentRef.current.value;
     if (comment) {
+      commentRef.current.value = "";
       const data = {
         userId: loggedInUser._id,
         postId: post._id,
@@ -83,7 +84,6 @@ const Post = (props) => {
       const res = await postReq("http://localhost:8800/api/comment/", data);
       if (res.ok) await loadComments();
       setCommentCursor("cursor-pointer");
-      commentRef.current.value = "";
       setCommentClicked(true);
     }
   };
@@ -128,7 +128,7 @@ const Post = (props) => {
               ref={postMenuRef}
               onBlur={postMenuBlur}
             >
-              <div onClick={togglePostMenuOpen} className="cursor-pointer ">
+              <div onClick={togglePostMenuOpen} className="cursor-pointer">
                 <MoreVertOutlinedIcon />
               </div>
               {postMenuOpen && (
@@ -225,7 +225,7 @@ const Post = (props) => {
           className="h-fit w-11/12 outline-none"
           placeholder="Add a comment"
         />
-        <a className="cursor-pointer ml-auto" onClick={addComment}>
+        <a className="cursor-pointer ml-auto"  onClick={addComment}>
           <SendIcon />
         </a>
       </div>

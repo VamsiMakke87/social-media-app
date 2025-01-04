@@ -24,7 +24,7 @@ const Home = () => {
 
   
   return (
-    <div className=" m-5 justify-items-center">
+    <div className=" bg-gray-200  justify-items-center">
       {posts.map((post) => (
         <Post key={post._id} post={post} loadPosts={loadPosts} />
       ))}
