@@ -26,7 +26,7 @@ const Home = () => {
   return (
     <div className=" m-5 justify-items-center">
       {posts.map((post) => (
-        <Post key={post._id} post={post}  />
+        <Post key={post._id} post={post} loadPosts={loadPosts} />
       ))}
     </div>
   );

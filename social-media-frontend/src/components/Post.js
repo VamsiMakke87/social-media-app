@@ -6,6 +6,7 @@ import { FaRegComment } from "react-icons/fa";
 import Comment from "./Comment";
 import AppContext from "../AppContext";
 import SendIcon from "@mui/icons-material/Send";
+import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 
 const Post = (props) => {
   const { loggedInUser, getReq, postReq, putReq, delReq } =
@@ -18,6 +19,9 @@ const Post = (props) => {
   const [commentClicked, setCommentClicked] = useState(false);
   const [post, setPost] = useState(props.post);
   const [comments, setComments] = useState([]);
+  const [postMenuOpen, setPostMenuOpen] = useState(false);
+  const postMenuRef = useRef();
+  const [deletePostMenu, setDeletePostMenu] = useState(false);
 
   const toggleLike = async () => {
     const res = await putReq(
@@ -53,7 +57,7 @@ const Post = (props) => {
         ...prev,
         comments: jsonData,
       }));
-      console.log(comments,',',post.comments);
+      console.log(comments, ",", post.comments);
     }
   };
 
@@ -81,6 +85,30 @@ const Post = (props) => {
     setCommentClicked(true);
   };
 
+  const toggleMenuOpen = () => {
+    setPostMenuOpen(!postMenuOpen);
+  };
+
+  const postMenuBlur = (event) => {
+    if (!postMenuRef.current.contains(event.relatedTarget)) {
+      setPostMenuOpen(false);
+      setDeletePostMenu(false);
+    }
+  };
+
+  const toggleDeletePostMenu = () => {
+    setDeletePostMenu(true);
+  };
+
+  const deletePost = async () => {
+    const res = await delReq(`http://localhost:8800/api/posts/${post._id}`, {
+      userId: loggedInUser._id,
+    });
+    if (res.ok) {
+      await props.loadPosts();
+    }
+  };
+
   return (
     <div className=" rounded p-5 w-10/12 border md:w-6/12 bg-white m-2 shadow-md">
       <div className="flex items-center">
@@ -91,6 +119,47 @@ const Post = (props) => {
             {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
           </div>
         </div>
+        {post.userId === loggedInUser._id && (
+          <div className="ml-auto ">
+            <div
+              className="relative"
+              tabIndex={0}
+              ref={postMenuRef}
+              onBlur={postMenuBlur}
+            >
+              <div onClick={toggleMenuOpen} className="cursor-pointer ">
+                <MoreVertOutlinedIcon  />
+              </div>
+              {postMenuOpen && (
+                <div className="absolute p-2 text-sm justify-center border rounded bg-white shadow-md h-18 w-fit top-3 right-3">
+                  {deletePostMenu ? (
+                    <div>
+                      <div>
+                        Do&nbsp;you&nbsp;want&nbsp;to&nbsp;delete&nbsp;the&nbsp;post?
+                      </div>
+                      <div className="flex">
+                        <button onClick={deletePost} className="border-black border m-1 p-2 w-1/2 hover:bg-black hover:text-white">Yes</button>
+                        <button onClick={()=>{setDeletePostMenu(false)}} className="border border-black m-1 p-2 w-1/2 hover:bg-black hover:text-white">No</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="p-2 hover:bg-gray-100 flex justify-items-center cursor-pointer rounded">
+                        Edit
+                      </div>
+                      <div
+                        onClick={toggleDeletePostMenu}
+                        className="p-2 hover:bg-gray-100 cursor-pointer rounded"
+                      >
+                        Delete
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
       <div className="my-2">{post.description}</div>
       <div className="my-2 justify-items-center">
@@ -124,7 +193,11 @@ const Post = (props) => {
         (comments.length > 0 ? (
           <div>
             {comments.map((comment) => (
-              <Comment key={comment._id} comment={comment} setCommentClicked={setCommentClicked}/>
+              <Comment
+                key={comment._id}
+                comment={comment}
+                setCommentClicked={setCommentClicked}
+              />
             ))}
           </div>
         ) : (

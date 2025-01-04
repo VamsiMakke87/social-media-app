@@ -20,7 +20,6 @@ const Navbar = () => {
   };
 
   const handleBlur = (event) => {
-    console.log("blur");
     if (!profileRef.current.contains(event.relatedTarget)) {
       setProfileMenuOpen(false);
     }
@@ -28,7 +27,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="p-4 h-20 sticky top-0 bg-white flex items-center shadow-xl">
+      <div className="p-4 h-20 sticky top-0 bg-white flex items-center shadow-xl z-50">
         <div className="w-1/5">
           <Link className="text-2xl font-extrabold" to="/">
             VamsiMakke
@@ -62,11 +61,12 @@ const Navbar = () => {
             onBlur={handleBlur}
             className="cursor-pointer"
             onClick={toggleProfile}
-            className="relative"
+            className="relative "
+            
           >
             <AccountCircleIcon className="cursor-pointer" />
             {profileMenuOpen && (
-              <div className="absolute bg-white border rounded w-40 right-2 p-2 space-y-1 shadow-2xl">
+              <div className="absolute bg-white  border rounded w-40 right-2 p-2 space-y-1 shadow-2xl">
                 <div className="px-4 py-2 cursor-pointer hover:bg-gray-100">
                   <Link to="/profile">Profile</Link>
                 </div>
