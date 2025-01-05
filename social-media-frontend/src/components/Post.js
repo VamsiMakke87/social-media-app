@@ -23,7 +23,7 @@ const Post = (props) => {
   const [postMenuOpen, setPostMenuOpen] = useState(false);
   const postMenuRef = useRef();
   const [deletePostMenu, setDeletePostMenu] = useState(false);
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -104,7 +104,6 @@ const Post = (props) => {
     }
   };
 
-
   const deletePost = async () => {
     const res = await delReq(`http://localhost:8800/api/posts/${post._id}`, {
       userId: loggedInUser._id,
@@ -116,12 +115,21 @@ const Post = (props) => {
 
   return (
     <div className=" rounded p-5 w-10/12 border md:w-6/12 bg-white m-2 shadow-md">
-      <div className="flex items-center cursor-pointer" onClick={()=>{navigate(`/user/profile/${post.userId}`)}}>
-        <img className="rounded-full mr-1 h-11 w-11" src={post.profilePic} />
-        <div>
-          <a className="font-semibold">{post.username}</a>
-          <div className="text-xs font-normal">
-            {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+      <div className="flex">
+        <div
+          className="flex items-center cursor-pointer"
+          onClick={() => {
+            navigate(`/user/profile/${post.userId}`);
+          }}
+        >
+          <img className="rounded-full mr-1 h-11 w-11" src={post.profilePic} />
+          <div>
+            <a className="font-semibold">{post.username}</a>
+            <div className="text-xs font-normal">
+              {formatDistanceToNow(new Date(post.createdAt), {
+                addSuffix: true,
+              })}
+            </div>
           </div>
         </div>
         {post.userId === loggedInUser._id && (
@@ -165,7 +173,9 @@ const Post = (props) => {
                         Edit
                       </div>
                       <div
-                        onClick={()=>{setDeletePostMenu(true)}}
+                        onClick={() => {
+                          setDeletePostMenu(true);
+                        }}
                         className="p-2 hover:bg-gray-100 cursor-pointer rounded"
                       >
                         Delete
@@ -229,7 +239,7 @@ const Post = (props) => {
           className="h-fit w-11/12 outline-none"
           placeholder="Add a comment"
         />
-        <a className="cursor-pointer ml-auto"  onClick={addComment}>
+        <a className="cursor-pointer ml-auto" onClick={addComment}>
           <SendIcon />
         </a>
       </div>
