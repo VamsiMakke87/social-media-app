@@ -5,6 +5,7 @@ import Profile from "./components/Profile";
 import Post from "./components/Post";
 import Home from "./components/Home";
 import AppContext from "./AppContext";
+import Search from "./components/Search";
 
 const App = () => {
   const [posts, setPosts] = useState([]);
@@ -93,6 +94,7 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/user/profile/:userId" element={<Profile />} />
           <Route path="/post" element={<Post />} />
+          <Route path="/search/:username" element={<Search />} />
         </Routes>
       </Router>
     </AppContext.Provider>

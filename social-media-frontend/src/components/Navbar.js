@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -8,10 +8,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import AppContext from "../AppContext";
 
 const Navbar = () => {
-  const { loggedInUser } = useContext(AppContext);
+  const { loggedInUser, getReq } = useContext(AppContext);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileRef = useRef();
+  const searchRef = useRef();
+  const navigate= useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -27,6 +29,13 @@ const Navbar = () => {
     }
   };
 
+  const searchUser = async () => {
+    const username = searchRef.current.value;
+    if (username) {
+      navigate(`/search/${username}`);
+    }
+  };
+
   return (
     <>
       <div className="p-4 h-20 sticky top-0 bg-white flex items-center shadow-xl z-50">
@@ -36,12 +45,19 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="hidden md:flex items-center border-black rounded border-2 w-1/2 mr-4">
-          <SearchIcon className=" border-black " />
+          <SearchIcon className=" ml-1" />
           <input
             className="appearance-none w-full  rounded  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white"
             type="text"
+            ref={searchRef}
             placeholder="Enter Username"
           />
+          <div
+            onClick={searchUser}
+            className="bg-black h text-white  h-full p-2 px-4 cursor-pointer"
+          >
+            Search
+          </div>
         </div>
 
         <div className=" flex ml-auto space-x-6">
@@ -94,12 +110,19 @@ const Navbar = () => {
       <div className="md:hidden">
         {menuOpen && (
           <div className="items-center flex m-4 border-black rounded border-2 w-100 ">
-            <SearchIcon />
+            <SearchIcon className="ml-1" />
             <input
               className="appearance-non w-full  rounded  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white"
               type="text"
+              ref={searchRef}
               placeholder="Enter Username"
             />
+            <div
+              onClick={searchUser}
+              className="bg-black h text-white  h-full p-2 px-4 cursor-pointer"
+            >
+              Search
+            </div>
           </div>
         )}
       </div>
