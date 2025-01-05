@@ -109,7 +109,7 @@ const Navbar = () => {
       </div>
       <div className="md:hidden">
         {menuOpen && (
-          <div className="items-center flex m-4 border-black rounded border-2 w-100 ">
+          <div className="items-center sticky top-0 flex m-4 border-black rounded border-2 w-100 ">
             <SearchIcon className="ml-1" />
             <input
               className="appearance-non w-full  rounded  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white"

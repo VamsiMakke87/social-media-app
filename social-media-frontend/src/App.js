@@ -51,6 +51,20 @@ const App = () => {
     }
   };
 
+  const postReqFile = async (url, data) => {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        body: data,
+        
+      });
+
+      return res;
+    } catch (err) {
+      return { message: "Could not process request. Please try again" };
+    }
+  };
+
   const putReq = async (url, data) => {
     try {
       const res = await fetch(url, {
@@ -85,7 +99,7 @@ const App = () => {
 
   return (
     <AppContext.Provider
-      value={{ posts, setPosts, getReq, postReq, putReq, delReq, loggedInUser }}
+      value={{ posts, setPosts, getReq, postReq,postReqFile, putReq, delReq, loggedInUser }}
     >
       <Router>
         <Navbar />

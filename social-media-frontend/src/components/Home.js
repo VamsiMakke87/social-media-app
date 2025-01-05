@@ -1,12 +1,23 @@
-import React, { use, useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Post from "./Post";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import AppContext from "../AppContext";
 
 const Home = () => {
-  const { posts, setPosts, loggedInUser, getReq, postReq, putReq, delReq } =
-    useContext(AppContext);
+  const {
+    posts,
+    setPosts,
+    loggedInUser,
+    getReq,
+    postReq,
+    postReqFile,
+    putReq,
+    delReq,
+  } = useContext(AppContext);
   const postRef = useRef();
+  const [file, setFile] = useState();
+  const [preview, setPreview] = useState(null); // For storing image preview
+  const [posting, setPosting] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -26,20 +37,47 @@ const Home = () => {
 
   const postContent = async () => {
     const description = postRef.current.value;
-    if (description) {
+    if (description || file) {
       postRef.current.value = "";
-      const res = await postReq("http://localhost:8800/api/posts", {
-        userId: loggedInUser._id,
-        description,
-      });
+      const formData = new FormData();
+      formData.append("userId", loggedInUser._id);
+      formData.append("description", description);
+      if (file) formData.append("file", file);
+      setPosting(true);
+      setPreview(null);
+      const res = await postReqFile(
+        "http://localhost:8800/api/posts",
+        formData
+      );
       if (res.ok) await loadPosts();
+      setPosting(false);
+    }
+  };
+
+  const handleClick = () => {
+    document.getElementById("file-upload").click();
+  };
+  
+  const removePhoto = ()=>{
+    setFile(null);
+    setPreview(null);
+  }
+
+  const handleFileChange = (event) => {
+    const uploadedFile = event.target.files[0];
+    if (uploadedFile) {
+      setFile(uploadedFile);
+
+      // Generate and set image preview URL
+      const filePreview = URL.createObjectURL(uploadedFile);
+      setPreview(filePreview);
     }
   };
 
   return (
-    <div className=" bg-slate-50  justify-items-center">
-      <div className=" rounded p-5 h-60 w-10/12 border md:w-6/12 bg-white m-2 shadow-md justify-items-start resize-none">
-        <div className=" w-full h-5/6">
+    <div className="bg-slate-50 justify-items-center">
+      <div className="rounded p-5 h-60 w-10/12 border md:w-6/12 bg-white m-2 shadow-md justify-items-start resize-none">
+        <div className="w-full h-5/6">
           <textarea
             ref={postRef}
             type="text"
@@ -49,8 +87,20 @@ const Home = () => {
         </div>
         <div className="w-full flex justify-items-center">
           <div className="cursor-pointer">
-            <AddPhotoAlternateOutlinedIcon />
+            <input
+              type="file"
+              id="file-upload"
+              accept=".jpg, .jpeg, .png"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <a onClick={handleClick}>
+              <AddPhotoAlternateOutlinedIcon />
+            </a>
           </div>
+
+          {/* Show image preview if file is selected */}
+
           <div
             onClick={postContent}
             className="ml-auto bg-black cursor-pointer text-white mt-1 rounded-lg p-2 px-6"
@@ -59,6 +109,19 @@ const Home = () => {
           </div>
         </div>
       </div>
+      {preview && (
+        <div className="rounded p-5 h-fit justify-items-center w-10/12 border md:w-6/12 bg-white m-2 shadow-md justify-items-start resize-none">
+          <div className="mt-2 left-24">
+            <img
+              src={preview}
+              alt="Image preview"
+              className="w-32 h-32 object-cover rounded-lg"
+            />
+          </div>
+            <a onClick={removePhoto} className="underline cursor-pointer">Remove photo</a>
+        </div>
+      )}
+      {posting && <p>Posting...</p>}
       {posts.map((post) => (
         <Post key={post._id} post={post} loadPosts={loadPosts} />
       ))}

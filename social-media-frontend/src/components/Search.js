@@ -30,7 +30,7 @@ const Search = () => {
   return (
     <div className="justify-items-center">
       {users.length === 0 ? (
-        <p>No users found.</p>
+        <p>No users found</p>
       ) : (
         users.map((user) => (
             <div key={user._id} onClick={()=>{navigate(`/user/profile/${user._id}`)}} className="flex md:w-6/12 w-10/12 h-24 items-center pl-2 bg-white m-2 cursor-pointer">
