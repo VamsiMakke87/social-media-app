@@ -7,6 +7,7 @@ import Comment from "./Comment";
 import AppContext from "../AppContext";
 import SendIcon from "@mui/icons-material/Send";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
+import { useNavigate } from "react-router-dom";
 
 const Post = (props) => {
   const { loggedInUser, getReq, postReq, putReq, delReq } =
@@ -22,6 +23,7 @@ const Post = (props) => {
   const [postMenuOpen, setPostMenuOpen] = useState(false);
   const postMenuRef = useRef();
   const [deletePostMenu, setDeletePostMenu] = useState(false);
+  const navigate= useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -114,7 +116,7 @@ const Post = (props) => {
 
   return (
     <div className=" rounded p-5 w-10/12 border md:w-6/12 bg-white m-2 shadow-md">
-      <div className="flex items-center">
+      <div className="flex items-center cursor-pointer" onClick={()=>{navigate(`/user/profile/${post.userId}`)}}>
         <img className="rounded-full mr-1 h-11 w-11" src={post.profilePic} />
         <div>
           <a className="font-semibold">{post.username}</a>

@@ -4,6 +4,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import { formatDistanceToNow } from "date-fns";
 import AppContext from "../AppContext";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
+import { useNavigate } from "react-router-dom";
 
 const Replies = (props) => {
   const { getReq, postReq, putReq, delReq, loggedInUser } =
@@ -15,6 +16,7 @@ const Replies = (props) => {
   const replyMenuRef = useRef();
   const [replyMenuOpen, setReplyMenuOpen] = useState(false);
   const [deleteReplyMenu, setDeleteReplyMenu] = useState(false);
+  const navigate= useNavigate();
 
   const toggleLike = async () => {
     const res = await putReq(
@@ -65,7 +67,7 @@ const Replies = (props) => {
   return (
     <div className="bg-gray-200 border p-2 rounded">
       <div className="flex">
-        <div className="flex space-x-1 items-center">
+        <div className="flex space-x-1 items-center cursor-pointer" onClick={()=>{navigate(`/user/profile/${reply.userId}`)}}>
           <img className="rounded-full h-9 w-9" src={reply.profilePic} />
           <div>
             <div className="text-sm font-semibold">{reply.username}</div>

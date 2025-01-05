@@ -15,7 +15,7 @@ const Profile = () => {
       await loadUser();
       await loadPosts();
     })();
-  }, []);
+  }, [userId]);
 
   const loadUser = async () => {
     try {
@@ -51,23 +51,36 @@ const Profile = () => {
   };
 
   const followUser = async () => {
-    const res = putReq(`http://localhost:8800/api/users/follow/${user._id}`, {
-      userId: loggedInUser._id,
-    });
+    const res = await putReq(
+      `http://localhost:8800/api/users/follow/${user._id}`,
+      {
+        userId: loggedInUser._id,
+      }
+    );
 
     if (res.ok) {
-      await loadUser();
+      setUser((prev) => ({
+        ...prev,
+        followers: [...prev.followers, loggedInUser._id],
+      }));
     }
   };
 
   const unFollowUser = async () => {
-    const res = putReq(`http://localhost:8800/api/users/unfollow/${user._id}`, {
-      userId: loggedInUser._id,
-    });
+    const res = await putReq(
+      `http://localhost:8800/api/users/unfollow/${user._id}`,
+      {
+        userId: loggedInUser._id,
+      }
+    );
 
     if (res.ok) {
-      console.log("unfollow");
-      await loadUser();
+      setUser((prev) => ({
+        ...prev,
+        followers: prev.followers.filter(
+          (follow) => follow != loggedInUser._id
+        ),
+      }));
     }
   };
 
@@ -76,7 +89,7 @@ const Profile = () => {
       {user && (
         <div className="rounded p-6 h-84 w-10/12 border justify-items-center  md:w-6/12 bg-white m-2 shadow-md justify-items-start resize-none">
           <img
-            className="h-30 w-30 m-3 rounded-full"
+            className="max-h-40 max-w-40 m-3 rounded-full"
             src={user.profilePic}
             alt="Profile"
           />
