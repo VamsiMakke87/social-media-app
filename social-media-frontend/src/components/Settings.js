@@ -3,7 +3,7 @@ import AppContext from "../AppContext";
 
 const Settings = () => {
   const [content, setContent] = useState("profile");
-  const { loggedInUser, putReqFile } = useContext(AppContext);
+  const { loggedInUser, putReqFile, loadUser } = useContext(AppContext);
   const [file, setFile] = useState(null);
   const [profilePic, setProfilePic] = useState(loggedInUser.profilePic);
 
@@ -44,6 +44,7 @@ const Settings = () => {
       formData);
       if(res.ok){
         setFile(null);
+        await loadUser(loggedInUser._id);
       }
     }
   };

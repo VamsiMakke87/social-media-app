@@ -9,7 +9,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState();
   const [followText, setFollowText] = useState(false);
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -25,6 +25,7 @@ const Profile = () => {
         const jsonData = await res.json();
         setUser(jsonData);
         setFollowText(jsonData.followers.includes(loggedInUser._id));
+        // console.log(user.profilePic);
       } else {
         console.error("Failed to fetch user data");
       }
@@ -41,9 +42,9 @@ const Profile = () => {
     }
   };
 
-  const editProfile =()=>{
-    navigate('/settings');
-  }
+  const editProfile = () => {
+    navigate("/settings");
+  };
 
   const toggleFollow = async () => {
     if (followText) {
@@ -92,9 +93,12 @@ const Profile = () => {
   return (
     <div className="bg-slate-50 p-5 justify-items-center">
       {user && (
-        <div className="rounded p-6 h-84 w-10/12 border justify-items-center  md:w-6/12 bg-white m-2 shadow-md justify-items-start resize-none">
+        <div
+          key={user.userId}
+          className="rounded p-6 h-84 w-10/12 border justify-items-center  md:w-6/12 bg-white m-2 shadow-md justify-items-start"
+        >
           <img
-            className="max-h-40 max-w-40 m-3 rounded-full"
+            className="h-40 w-40 m-3 rounded-full"
             src={user.profilePic}
             alt="Profile"
           />
@@ -110,7 +114,10 @@ const Profile = () => {
             </div>
           </div>
           {loggedInUser._id === user._id ? (
-            <div onClick={editProfile} className="border p-2 mt-1 px-8 rounded-md border-black hover:bg-black hover:text-white cursor-pointer">
+            <div
+              onClick={editProfile}
+              className="border p-2 mt-1 px-8 rounded-md border-black hover:bg-black hover:text-white cursor-pointer"
+            >
               Edit Profile
             </div>
           ) : (

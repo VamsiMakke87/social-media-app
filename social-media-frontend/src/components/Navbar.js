@@ -83,7 +83,7 @@ const Navbar = () => {
           >
             <img
               src={loggedInUser.profilePic}
-              className="cursor-pointer h-fit w-6 rounded-full"
+              className="cursor-pointer h-6 w-6 rounded-full"
             />
             {profileMenuOpen && (
               <div className="absolute bg-white border rounded w-40 right-2 p-2 space-y-1 shadow-2xl">
