@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import AppContext from "../AppContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Post from "./Post";
 
 const Profile = () => {
@@ -9,6 +9,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState();
   const [followText, setFollowText] = useState(false);
+  const navigate= useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -39,6 +40,10 @@ const Profile = () => {
       setPosts(postsData);
     }
   };
+
+  const editProfile =()=>{
+    navigate('/settings');
+  }
 
   const toggleFollow = async () => {
     if (followText) {
@@ -105,7 +110,7 @@ const Profile = () => {
             </div>
           </div>
           {loggedInUser._id === user._id ? (
-            <div className="border p-2 mt-1 px-8 rounded-md border-black hover:bg-black hover:text-white cursor-pointer">
+            <div onClick={editProfile} className="border p-2 mt-1 px-8 rounded-md border-black hover:bg-black hover:text-white cursor-pointer">
               Edit Profile
             </div>
           ) : (

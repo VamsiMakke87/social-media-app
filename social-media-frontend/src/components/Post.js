@@ -193,7 +193,7 @@ const Post = (props) => {
         {post.image && (
           <img
             className="w-fit max-h-96 rounded"
-            src={props.post.image}
+            src={post.image}
             alt="Post content"
           />
         )}
