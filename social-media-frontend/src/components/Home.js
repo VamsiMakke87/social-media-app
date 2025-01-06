@@ -57,11 +57,11 @@ const Home = () => {
   const handleClick = () => {
     document.getElementById("file-upload").click();
   };
-  
-  const removePhoto = ()=>{
+
+  const removePhoto = () => {
     setFile(null);
     setPreview(null);
-  }
+  };
 
   const handleFileChange = (event) => {
     const uploadedFile = event.target.files[0];
@@ -118,13 +118,19 @@ const Home = () => {
               className="w-32 h-32 object-cover rounded-lg"
             />
           </div>
-            <a onClick={removePhoto} className="underline cursor-pointer">Remove photo</a>
+          <a onClick={removePhoto} className="underline cursor-pointer">
+            Remove photo
+          </a>
         </div>
       )}
       {posting && <p>Posting...</p>}
-      {posts.map((post) => (
-        <Post key={post._id} post={post} loadPosts={loadPosts} />
-      ))}
+      {posts ? (
+        posts.map((post) => (
+          <Post key={post._id} post={post} loadPosts={loadPosts} />
+        ))
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 };

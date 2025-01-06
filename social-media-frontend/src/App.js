@@ -9,8 +9,23 @@ import Search from "./components/Search";
 import Settings from "./components/Settings";
 
 const App = () => {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      await loadUser("6776afb7d5fe2e0fce835871");
+    })();
+  }, []);
+
+  const loadUser = async (userId) => {
+    const res = await getReq(`http://localhost:8800/api/users/${userId}`);
+
+    if (res.ok) {
+      const jsonData = await res.json();
+      setLoggedInUser(jsonData);
+    }
+  };
 
   const getReq = async (url) => {
     try {
@@ -95,21 +110,6 @@ const App = () => {
       return { message: "Could not process request. Please try again" };
     }
   };
-
-  const loadUser = async (userId) => {
-    const res = await getReq(`http://localhost:8800/api/users/${userId}`);
-
-    if (res.ok) {
-      const jsonData = await res.json();
-      setLoggedInUser(jsonData);
-    }
-  };
-
-  useEffect(() => {
-    (async () => {
-      await loadUser("6776afb7d5fe2e0fce835871");
-    })();
-  }, []);
 
   return (
     <>
