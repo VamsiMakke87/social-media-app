@@ -1,10 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import AppContext from "../AppContext";
 
 const Settings = () => {
   const [content, setContent] = useState("profile");
-  const { loggedInUser, putReqFile, loadUser } = useContext(AppContext);
+  const { loggedInUser, putReqFile, putReq, loadUser } = useContext(AppContext);
   const [file, setFile] = useState(null);
+  const [editUsername, setEditUsername] = useState();
+  const usernameRef = useRef();
   const [profilePic, setProfilePic] = useState(loggedInUser.profilePic);
 
   const profileClickHandler = () => {
@@ -40,18 +42,43 @@ const Settings = () => {
       const formData = new FormData();
       formData.append("userId", loggedInUser._id);
       formData.append("file", file);
-      const res = await putReqFile("http://localhost:8800/api/users/profilepic",
-      formData);
-      if(res.ok){
+      const res = await putReqFile(
+        "http://localhost:8800/api/users/profilepic",
+        formData
+      );
+      if (res.ok) {
         setFile(null);
         await loadUser(loggedInUser._id);
       }
     }
   };
 
+  const updateUsername = async () => {
+    const newUsername = usernameRef.current.value;
+
+    if (newUsername) {
+      try {
+        const res = await putReq(
+          `http://localhost:8800/api/users/${loggedInUser._id}`,
+          {
+            userId: loggedInUser._id,
+            username: newUsername,
+          }
+        );
+
+        if (res.ok) {
+          setEditUsername(false);
+          await loadUser(loggedInUser._id);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
   return (
     <div className="flex m-10 space-x-2">
-      <div className="w-4/12 md:w-3/12 bg-white shadow-md rounded p-4">
+      <div className="w-4/12 md:w-3/12 h-fit bg-white shadow-md rounded p-4">
         <a
           onClick={profileClickHandler}
           className="block bg-white p-1 rounded hover:bg-slate-100 cursor-pointer"
@@ -65,7 +92,7 @@ const Settings = () => {
           Change Password
         </a>
       </div>
-      <div className="bg-slate-200 border rounded p-2 w-8/12">
+      <div className="bg-slate-200 border h-fit rounded p-2 w-8/12">
         {content === "profile" ? (
           <div className="justify-items-center">
             <img className="rounded-full h-32 w-32 " src={profilePic} />
@@ -98,6 +125,45 @@ const Settings = () => {
                 </div>
               </div>
             )}
+            <div className="flex space-x-1 items-center">
+              {editUsername ? (
+                <div className="justify-items-center">
+                  <input
+                    ref={usernameRef}
+                    type="text"
+                    placeholder="Enter Username"
+                    className="block"
+                  />
+
+                  <a
+                    onClick={updateUsername}
+                    className="text-xs cursor-pointer underline"
+                  >
+                    Save
+                  </a>
+                  <a
+                    onClick={() => {
+                      setEditUsername(false);
+                    }}
+                    className="text-xs ml-1 cursor-pointer underline"
+                  >
+                    Cancel
+                  </a>
+                </div>
+              ) : (
+                <>
+                  <div className="font-bold text-xl">{loggedInUser.username} </div>
+                  <a
+                    onClick={() => {
+                      setEditUsername(true);
+                    }}
+                    className="text-xs cursor-pointer underline"
+                  >
+                    (Edit)
+                  </a>
+                </>
+              )}
+            </div>
           </div>
         ) : (
           <>Change Password</>

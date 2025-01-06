@@ -102,7 +102,7 @@ const Profile = () => {
             src={user.profilePic}
             alt="Profile"
           />
-          <div className="font-bold">{user.username}</div>
+          <div className="font-bold text-xl">{user.username}</div>
           <div className="flex space-x-16">
             <div className="justify-items-center">
               <div>{user.followers.length}</div>

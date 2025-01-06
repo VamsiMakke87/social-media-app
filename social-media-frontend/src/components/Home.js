@@ -99,8 +99,6 @@ const Home = () => {
             </a>
           </div>
 
-          {/* Show image preview if file is selected */}
-
           <div
             onClick={postContent}
             className="ml-auto bg-black cursor-pointer text-white mt-1 rounded-lg p-2 px-6"
