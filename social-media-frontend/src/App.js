@@ -12,18 +12,17 @@ import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
 import AuthComponent from "./components/AuthComponent";
+import Notifications from "./components/Notifications";
 
 const App = () => {
   const [posts, setPosts] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [token, setToken] = useState();
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
     if (userId && token) {
       (async () => {
-        console.log(userId);
         await loadUser(userId);
       })();
     }
@@ -43,7 +42,7 @@ const App = () => {
       const res = await fetch(url, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       return res;
@@ -60,7 +59,7 @@ const App = () => {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
@@ -75,6 +74,9 @@ const App = () => {
       const res = await fetch(url, {
         method: "POST",
         body: data,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
 
       return res;
@@ -90,6 +92,7 @@ const App = () => {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
@@ -104,6 +107,9 @@ const App = () => {
       const res = await fetch(url, {
         method: "PUT",
         body: data,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
 
       return res;
@@ -119,6 +125,7 @@ const App = () => {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
@@ -143,21 +150,70 @@ const App = () => {
             delReq,
             loggedInUser,
             setLoggedInUser,
-            setToken,
             loadUser,
           }}
         >
           <Router>
-              {loggedInUser && <Navbar />}
+            {loggedInUser && <Navbar />}
             <Routes>
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<AuthComponent><Home /></AuthComponent>} />
-              <Route path="/home" element={<AuthComponent><Home /></AuthComponent>} />
-              <Route path="/user/profile/:userId" element={<AuthComponent><Profile /></AuthComponent>} />
-              <Route path="/post" element={<AuthComponent><Post /></AuthComponent>} />
-              <Route path="/search/:username" element={<AuthComponent><Search /></AuthComponent>} />
-              <Route path="/settings" element={<AuthComponent><Settings /></AuthComponent>} />
+              <Route
+                path="/"
+                element={
+                  <AuthComponent>
+                    <Home />
+                  </AuthComponent>
+                }
+              />
+              <Route
+                path="/home"
+                element={
+                  <AuthComponent>
+                    <Home />
+                  </AuthComponent>
+                }
+              />
+              <Route
+                path="/user/profile/:userId"
+                element={
+                  <AuthComponent>
+                    <Profile />
+                  </AuthComponent>
+                }
+              />
+              <Route
+                path="/post"
+                element={
+                  <AuthComponent>
+                    <Post />
+                  </AuthComponent>
+                }
+              />
+              <Route
+                path="/search/:username"
+                element={
+                  <AuthComponent>
+                    <Search />
+                  </AuthComponent>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <AuthComponent>
+                    <Settings />
+                  </AuthComponent>
+                }
+              />
+              <Route
+                path="/Notifications"
+                element={
+                  <AuthComponent>
+                    <Notifications />
+                  </AuthComponent>
+                }
+              />
               <Route path="/demo" element={<Demo />} />
               <Route path="/logout" element={<Logout />} />
             </Routes>

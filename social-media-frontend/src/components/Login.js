@@ -27,7 +27,7 @@ const Login = () => {
         const data = await res.json();
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("token", data.token);
-        await loadUser(data.userId);
+        loadUser(data.userId);
         navigate("/");
       } else {
         setMessage("Invalid Credentials");

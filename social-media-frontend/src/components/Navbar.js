@@ -11,6 +11,7 @@ const Navbar = () => {
   const { loggedInUser, getReq } = useContext(AppContext);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [notification, setNotification] = useState(false);
   const profileRef = useRef();
   const searchRef = useRef();
   const navigate = useNavigate();
@@ -76,7 +77,12 @@ const Navbar = () => {
               <Link to="/home">
                 <HomeIcon />
               </Link>
-              <NotificationsIcon />
+              <div>
+                <div onClick={()=>{navigate('/notifications')}} className="cursor-pointer">
+                <NotificationsIcon />
+                </div>
+                {notification && <div className="text-red-700 rounded-full right-16 top-8 text-xs h-2 w-2 bg-red-700 absolute"></div>}
+              </div>
               {/* <Link to="/post">Posts</Link> */}
 
               <div
