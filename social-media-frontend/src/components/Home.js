@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import Post from "./Post";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import AppContext from "../AppContext";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const {
@@ -18,9 +19,12 @@ const Home = () => {
   const [file, setFile] = useState();
   const [preview, setPreview] = useState(null); // For storing image preview
   const [posting, setPosting] = useState(false);
+  const navigate =useNavigate();
 
   useEffect(() => {
     (async () => {
+        if(!loggedInUser)
+            return navigate("/login");
       await loadPosts();
     })();
   }, []);

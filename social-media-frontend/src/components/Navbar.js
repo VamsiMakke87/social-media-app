@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
@@ -14,6 +14,13 @@ const Navbar = () => {
   const profileRef = useRef();
   const searchRef = useRef();
   const navigate= useNavigate();
+
+  useEffect(() => {
+    // Check for logged-in user and redirect to login if not authenticated
+    if (!loggedInUser) {
+      navigate("/login");
+    }
+  }, [loggedInUser, navigate]);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);

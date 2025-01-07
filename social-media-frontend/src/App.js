@@ -7,16 +7,21 @@ import Home from "./components/Home";
 import AppContext from "./AppContext";
 import Search from "./components/Search";
 import Settings from "./components/Settings";
+import Demo from "./components/Demo";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
+import Logout from "./components/Logout";
 
 const App = () => {
   const [posts, setPosts] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [token, setToken] = useState();
 
-  useEffect(() => {
-    (async () => {
-      await loadUser("6776afb7d5fe2e0fce835871");
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await loadUser("6776afb7d5fe2e0fce835871");
+  //   })();
+  // }, []);
 
   const loadUser = async (userId) => {
     const res = await getReq(`http://localhost:8800/api/users/${userId}`);
@@ -29,7 +34,12 @@ const App = () => {
 
   const getReq = async (url) => {
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return res;
     } catch (err) {
       console.log(err);
@@ -44,6 +54,7 @@ const App = () => {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -113,7 +124,7 @@ const App = () => {
 
   return (
     <>
-      {loggedInUser && (
+      { (
         <AppContext.Provider
           value={{
             posts,
@@ -125,18 +136,24 @@ const App = () => {
             putReqFile,
             delReq,
             loggedInUser,
+            setLoggedInUser,
+            setToken,
             loadUser,
           }}
         >
           <Router>
-            <Navbar />
+            {loggedInUser && <Navbar />}
             <Routes>
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
               <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
               <Route path="/user/profile/:userId" element={<Profile />} />
               <Route path="/post" element={<Post />} />
               <Route path="/search/:username" element={<Search />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/demo" element={<Demo />} />
+              <Route path="/logout" element={<Logout />} />
             </Routes>
           </Router>
         </AppContext.Provider>

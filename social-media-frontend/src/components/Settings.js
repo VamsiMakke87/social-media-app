@@ -107,7 +107,7 @@ const Settings = () => {
               onClick={uploadFileClick}
               className="text-sm underline cursor-pointer"
             >
-              Change Profile Picture
+              Edit&nbsp;Profile&nbsp;Picture
             </a>
             {file && (
               <div className="flex space-x-2">
