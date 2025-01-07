@@ -26,10 +26,12 @@ const Post = (props) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    (async () => {
-      await loadComments();
-    })();
-  }, []);
+    if (loggedInUser) {
+      (async () => {
+        await loadComments();
+      })();
+    }
+  }, [loggedInUser]);
 
   const toggleLike = async () => {
     const res = await putReq(
@@ -122,10 +124,7 @@ const Post = (props) => {
             navigate(`/user/profile/${post.userId}`);
           }}
         >
-          <img
-            className="rounded-full mr-1 h-11 w-11"
-            src={post.profilePic}
-          />
+          <img className="rounded-full mr-1 h-11 w-11" src={post.profilePic} />
           <div>
             <a className="font-semibold">{post.username}</a>
             <div className="text-xs font-normal">

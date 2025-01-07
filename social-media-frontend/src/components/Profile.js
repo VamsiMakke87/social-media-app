@@ -12,11 +12,13 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    (async () => {
-      await loadUser();
-      await loadPosts();
-    })();
-  }, [userId]);
+    if (loggedInUser) {
+      (async () => {
+        await loadUser();
+        await loadPosts();
+      })();
+    }
+  }, [userId, loggedInUser]);
 
   const loadUser = async () => {
     try {

@@ -13,6 +13,7 @@ import Login from "./components/Login";
 import Logout from "./components/Logout";
 import AuthComponent from "./components/AuthComponent";
 import Notifications from "./components/Notifications";
+import ErrorPage from "./components/ErrorPage";
 
 const App = () => {
   const [posts, setPosts] = useState(null);
@@ -42,7 +43,7 @@ const App = () => {
       const res = await fetch(url, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       return res;
@@ -59,7 +60,7 @@ const App = () => {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
@@ -75,7 +76,7 @@ const App = () => {
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
@@ -92,7 +93,7 @@ const App = () => {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
@@ -108,7 +109,7 @@ const App = () => {
         method: "PUT",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
@@ -125,7 +126,7 @@ const App = () => {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
@@ -183,7 +184,7 @@ const App = () => {
                 }
               />
               <Route
-                path="/post"
+                path="/post/:id"
                 element={
                   <AuthComponent>
                     <Post />
@@ -216,6 +217,7 @@ const App = () => {
               />
               <Route path="/demo" element={<Demo />} />
               <Route path="/logout" element={<Logout />} />
+              <Route path="/*" element={<ErrorPage />} />
             </Routes>
           </Router>
         </AppContext.Provider>

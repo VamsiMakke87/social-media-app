@@ -22,14 +22,15 @@ const Comment = (props) => {
   const commentMenuRef = useRef();
   const [commentMenuOpen, setCommentMenuOpen] = useState(false);
   const [deleteCommentMenu, setDeleteCommentMenu] = useState(false);
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
-
-  useEffect(()=>{
-    (async () => {
-      await loadReplies();
-    })();
-  },[]);
+  useEffect(() => {
+    if (loggedInUser) {
+      (async () => {
+        await loadReplies();
+      })();
+    }
+  }, [loggedInUser]);
 
   const toggleLike = async () => {
     const res = await putReq(
@@ -118,7 +119,12 @@ const Comment = (props) => {
   return (
     <div className="mt-1 p-2 rounded border  bg-gray-100">
       <div className="flex">
-        <div className="flex  space-x-1 items-center cursor-pointer" onClick={()=>{navigate(`/user/profile/${comment.userId}`)}}>
+        <div
+          className="flex  space-x-1 items-center cursor-pointer"
+          onClick={() => {
+            navigate(`/user/profile/${comment.userId}`);
+          }}
+        >
           <img className="h-10 w-10 rounded-full" src={comment.profilePic} />
           <div>
             <div className="text-sm font-semibold">{comment.username}</div>

@@ -16,9 +16,7 @@ const Navbar = () => {
   const searchRef = useRef();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (!localStorage.getItem("userId")) navigate("/login");
-  // }, []);
+  
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
