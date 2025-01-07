@@ -9,6 +9,7 @@ const Home = () => {
     posts,
     setPosts,
     loggedInUser,
+    token,
     getReq,
     postReq,
     postReqFile,
@@ -19,15 +20,13 @@ const Home = () => {
   const [file, setFile] = useState();
   const [preview, setPreview] = useState(null); // For storing image preview
   const [posting, setPosting] = useState(false);
-  const navigate =useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
-        if(!loggedInUser)
-            return navigate("/login");
-      await loadPosts();
+      if (loggedInUser) await loadPosts();
     })();
-  }, []);
+  }, [loggedInUser]);
 
   const loadPosts = async () => {
     const res = await getReq(
@@ -79,61 +78,67 @@ const Home = () => {
   };
 
   return (
-    <div className="bg-slate-50 justify-items-center">
-      <div className="rounded p-5 h-60 w-10/12 border md:w-6/12 bg-white m-2 shadow-md justify-items-start resize-none">
-        <div className="w-full h-5/6">
-          <textarea
-            ref={postRef}
-            type="text"
-            placeholder="Say Something..."
-            className="w-full h-full px-4 py-2 border rounded-lg focus:outline-none resize-none"
-          />
-        </div>
-        <div className="w-full flex justify-items-center">
-          <div className="cursor-pointer">
-            <input
-              type="file"
-              id="file-upload"
-              accept=".jpg, .jpeg, .png"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-            <a onClick={handleClick}>
-              <AddPhotoAlternateOutlinedIcon />
-            </a>
-          </div>
+    <>
+      {loggedInUser ? (
+        <div className="bg-slate-50 justify-items-center">
+          <div className="rounded p-5 h-60 w-10/12 border md:w-6/12 bg-white m-2 shadow-md justify-items-start resize-none">
+            <div className="w-full h-5/6">
+              <textarea
+                ref={postRef}
+                type="text"
+                placeholder="Say Something..."
+                className="w-full h-full px-4 py-2 border rounded-lg focus:outline-none resize-none"
+              />
+            </div>
+            <div className="w-full flex justify-items-center">
+              <div className="cursor-pointer">
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept=".jpg, .jpeg, .png"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+                <a onClick={handleClick}>
+                  <AddPhotoAlternateOutlinedIcon />
+                </a>
+              </div>
 
-          <div
-            onClick={postContent}
-            className="ml-auto bg-black cursor-pointer text-white mt-1 rounded-lg p-2 px-6"
-          >
-            Post
+              <div
+                onClick={postContent}
+                className="ml-auto bg-black cursor-pointer text-white mt-1 rounded-lg p-2 px-6"
+              >
+                Post
+              </div>
+            </div>
           </div>
+          {preview && (
+            <div className="rounded p-5 h-fit justify-items-center w-10/12 border md:w-6/12 bg-white m-2 shadow-md justify-items-start resize-none">
+              <div className="mt-2 left-24">
+                <img
+                  src={preview}
+                  alt="Image preview"
+                  className="w-32 h-32 object-cover rounded-lg"
+                />
+              </div>
+              <a onClick={removePhoto} className="underline cursor-pointer">
+                Remove photo
+              </a>
+            </div>
+          )}
+          {posting && <p>Posting...</p>}
+          {posts ? (
+            posts.map((post) => (
+              <Post key={post._id} post={post} loadPosts={loadPosts} />
+            ))
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
-      </div>
-      {preview && (
-        <div className="rounded p-5 h-fit justify-items-center w-10/12 border md:w-6/12 bg-white m-2 shadow-md justify-items-start resize-none">
-          <div className="mt-2 left-24">
-            <img
-              src={preview}
-              alt="Image preview"
-              className="w-32 h-32 object-cover rounded-lg"
-            />
-          </div>
-          <a onClick={removePhoto} className="underline cursor-pointer">
-            Remove photo
-          </a>
-        </div>
-      )}
-      {posting && <p>Posting...</p>}
-      {posts ? (
-        posts.map((post) => (
-          <Post key={post._id} post={post} loadPosts={loadPosts} />
-        ))
       ) : (
-        <p>Loading...</p>
+        <div className=" text-center">Loading...</div>
       )}
-    </div>
+    </>
   );
 };
 

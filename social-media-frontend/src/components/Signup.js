@@ -1,15 +1,19 @@
 import React, { useContext, useRef, useState } from "react";
 import AppContext from "../AppContext";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const { postReq, setLoggedInUser, setToken } = useContext(AppContext);
-  const [message,setMessage]=useState();
+  const [message, setMessage] = useState();
   const navigate = useNavigate();
   const emailRef = useRef();
   const usernameRef = useRef();
-  const passwordRef =  useRef();
+  const passwordRef = useRef();
   const confirmPasswordRef = useRef();
+
+  if (localStorage.getItem("userId")) {
+    return <Navigate to="/" replace />;
+  }
 
   const signUp = async () => {
     const email = emailRef.current.value;
@@ -17,31 +21,28 @@ const Signup = () => {
     const password = passwordRef.current.value;
     const confPassword = confirmPasswordRef.current.value;
     setMessage();
-    if(username && email && password && confPassword){
+    if (username && email && password && confPassword) {
+      const res = await postReq("http://localhost:8800/api/auth/login", {
+        email: emailRef.current.value,
+        password: passwordRef.current.value,
+      });
 
-        const res= await postReq('http://localhost:8800/api/auth/login',{
-            email: emailRef.current.value,
-            password: passwordRef.current.value
-        });
-
-        if(res.ok){
-            const data= await res.json();
-            setLoggedInUser(data.user);
-            setToken(data.token);
-            navigate("/");
-        }else{
-            setMessage('Invalid Credentials');
-        }
-
-    }else{
-        setMessage('Please enter all details');
+      if (res.ok) {
+        const data = await res.json();
+        setLoggedInUser(data.user);
+        setToken(data.token);
+        navigate("/");
+      } else {
+        setMessage("Invalid Credentials");
+      }
+    } else {
+      setMessage("Please enter all details");
     }
-
   };
 
-  const login = ()=>{
-    navigate('/login');
-  }
+  const login = () => {
+    navigate("/login");
+  };
 
   return (
     <div className="bg-slate-100 h-screen flex items-center  justify-center">
@@ -79,7 +80,9 @@ const Signup = () => {
             className="outline outline-slate-300 focus:outline-black rounded h-10 p-2 w-full"
           />
         </div>
-        <a className="underline text-xs text-blue-700 cursor-pointer">Forgot Password?</a>
+        <a className="underline text-xs text-blue-700 cursor-pointer">
+          Forgot Password?
+        </a>
         <div
           onClick={signUp}
           className="w-full p-2 cursor-pointer mt-2 rounded justify-items-center border  text-center border-black hover:bg-black hover:text-white"
@@ -87,7 +90,12 @@ const Signup = () => {
           Sign Up
         </div>
         <div className="mt-2 text-center text-red-700">{message}</div>
-        <a onClick={login} className="text-center block text-sm  cursor-pointer">Have an account? <a className="text-blue-700">Login</a></a>
+        <div
+          onClick={login}
+          className="text-center block text-sm  cursor-pointer"
+        >
+          Have an account? <a className="text-blue-700">Login</a>
+        </div>
       </div>
     </div>
   );

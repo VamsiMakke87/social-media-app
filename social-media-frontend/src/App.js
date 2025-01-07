@@ -11,17 +11,23 @@ import Demo from "./components/Demo";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
+import AuthComponent from "./components/AuthComponent";
 
 const App = () => {
   const [posts, setPosts] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [token, setToken] = useState();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     await loadUser("6776afb7d5fe2e0fce835871");
-  //   })();
-  // }, []);
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    if (userId && token) {
+      (async () => {
+        console.log(userId);
+        await loadUser(userId);
+      })();
+    }
+  }, []);
 
   const loadUser = async (userId) => {
     const res = await getReq(`http://localhost:8800/api/users/${userId}`);
@@ -124,7 +130,7 @@ const App = () => {
 
   return (
     <>
-      { (
+      {
         <AppContext.Provider
           value={{
             posts,
@@ -142,22 +148,22 @@ const App = () => {
           }}
         >
           <Router>
-            {loggedInUser && <Navbar />}
+              {loggedInUser && <Navbar />}
             <Routes>
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Home />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/user/profile/:userId" element={<Profile />} />
-              <Route path="/post" element={<Post />} />
-              <Route path="/search/:username" element={<Search />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="/" element={<AuthComponent><Home /></AuthComponent>} />
+              <Route path="/home" element={<AuthComponent><Home /></AuthComponent>} />
+              <Route path="/user/profile/:userId" element={<AuthComponent><Profile /></AuthComponent>} />
+              <Route path="/post" element={<AuthComponent><Post /></AuthComponent>} />
+              <Route path="/search/:username" element={<AuthComponent><Search /></AuthComponent>} />
+              <Route path="/settings" element={<AuthComponent><Settings /></AuthComponent>} />
               <Route path="/demo" element={<Demo />} />
               <Route path="/logout" element={<Logout />} />
             </Routes>
           </Router>
         </AppContext.Provider>
-      )}
+      }
     </>
   );
 };
