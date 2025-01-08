@@ -16,6 +16,8 @@ const Post = (props) => {
   const [post, setPost] = useState(props.post || location.state?.post);
   const commentRef = useRef();
   const [liked, setLiked] = useState(false);
+  const [targetId, setTargetId] = useState(false);
+  const [targetCommentId, setTargetCommentLiked] = useState(false);
   const [commentCursor, setCommentCursor] = useState("cursor-pointer");
   const [commentClicked, setCommentClicked] = useState(false);
   const [comments, setComments] = useState([]);
@@ -28,6 +30,7 @@ const Post = (props) => {
     if (loggedInUser && post) {
       if (location.state) {
         setPost(location.state.post);
+        setCommentClicked(true);
       }
       setLiked(post?.likes.includes(loggedInUser._id));
       (async () => {
@@ -35,6 +38,12 @@ const Post = (props) => {
       })();
     }
   }, [loggedInUser, location.state?.post]);
+
+  useEffect(() => {
+    if (location.state?.targetId) setTargetId(location.state.targetId);
+    if (location.state?.targetCommentId)
+      setTargetCommentLiked(location.state.targetCommentId);
+  }, [location.state?.targetId, location.state?.targetCommentId]);
 
   const toggleLike = async () => {
     const res = await putReq(
@@ -87,6 +96,7 @@ const Post = (props) => {
       const data = {
         userId: loggedInUser._id,
         postId: post._id,
+        postUserId: post.userId,
         description: comment,
       };
       setCommentCursor("cursor-wait");
@@ -121,7 +131,11 @@ const Post = (props) => {
   return (
     <>
       {loggedInUser && post ? (
-        <div className=" rounded p-5 w-10/12 border md:w-6/12 bg-white m-2 shadow-md">
+        <div
+          className={` rounded p-5  border  ${
+            location.state ? "w-11.5/12 mt-2 mx-10" : "w-10/12 m-2 md:w-6/12"
+          } bg-white  shadow-md`}
+        >
           <div className="flex">
             <div
               className="flex items-center cursor-pointer"
@@ -236,6 +250,8 @@ const Post = (props) => {
                     key={comment._id}
                     comment={comment}
                     loadComments={loadComments}
+                    targetId={targetId}
+                    targetCommentId={targetCommentId}
                   />
                 ))}
               </div>

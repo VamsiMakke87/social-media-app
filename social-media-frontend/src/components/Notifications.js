@@ -28,9 +28,13 @@ const Notifications = () => {
   return (
     <div className="bg-slate-200 min-h-screen overflow-auto justify-items-center">
       {notifications ? (
-        notifications.map((notification) => (
-          <Notification notification={notification} key={notification._id} />
-        ))
+        notifications.length > 0 ? (
+          notifications.map((notification) => (
+            <Notification notification={notification} key={notification._id} />
+          ))
+        ) : (
+          <div>No new notifications</div>
+        )
       ) : (
         <div>Loading....</div>
       )}

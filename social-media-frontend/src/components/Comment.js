@@ -7,11 +7,13 @@ import Replies from "./Replies";
 import AppContext from "../AppContext";
 import SendIcon from "@mui/icons-material/Send";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Comment = (props) => {
   const { getReq, postReq, putReq, delReq, loggedInUser } =
     useContext(AppContext);
+  const location = useLocation();
+  const commentRef = useRef();
   const replyRef = useRef();
   const [comment, setComment] = useState(props.comment);
   const [liked, setLiked] = useState(
@@ -31,6 +33,15 @@ const Comment = (props) => {
       })();
     }
   }, [loggedInUser]);
+
+  useEffect(() => {
+    if (props.targetId) {
+      if (props.targetId === comment._id) {
+      } else if (props.targetCommentId === comment._id) {
+        setReplyClicked(true);
+      }
+    }
+  }, []);
 
   const toggleLike = async () => {
     const res = await putReq(
@@ -80,7 +91,9 @@ const Comment = (props) => {
       replyRef.current.value = "";
       const data = {
         userId: loggedInUser._id,
+        postId: comment.postId,
         commentId: comment._id,
+        commentUserId: comment.userId,
         description: reply,
       };
 
@@ -117,7 +130,7 @@ const Comment = (props) => {
     }
   };
   return (
-    <div className="mt-1 p-2 rounded border  bg-gray-100">
+    <div ref={commentRef} className="mt-1 p-2 rounded border  bg-gray-100">
       <div className="flex">
         <div
           className="flex  space-x-1 items-center cursor-pointer"
