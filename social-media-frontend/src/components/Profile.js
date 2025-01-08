@@ -93,7 +93,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="bg-slate-50 p-5 justify-items-center">
+    <div className="bg-slate-200 min-h-screen p-5 justify-items-center">
       {user && (
         <div
           key={user.userId}

@@ -9,7 +9,7 @@ const Logout = () => {
   useEffect(() => {
     localStorage.removeItem('userId');
     localStorage.removeItem('token');
-    setLoggedInUser();
+    setLoggedInUser(null);
     navigate("/login");
   }, []);
 

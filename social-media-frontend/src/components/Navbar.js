@@ -8,15 +8,15 @@ import CloseIcon from "@mui/icons-material/Close";
 import AppContext from "../AppContext";
 
 const Navbar = () => {
-  const { loggedInUser, getReq } = useContext(AppContext);
+  const { loggedInUser, putReq } = useContext(AppContext);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [notification, setNotification] = useState(false);
+  const [notification, setNotification] = useState(
+    loggedInUser.hasUnreadNotifications
+  );
   const profileRef = useRef();
   const searchRef = useRef();
   const navigate = useNavigate();
-
-  
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -29,6 +29,20 @@ const Navbar = () => {
   const handleBlur = (event) => {
     if (!profileRef.current.contains(event.relatedTarget)) {
       setProfileMenuOpen(false);
+    }
+  };
+
+  const notificationClick = async () => {
+    try {
+      if (notification) {
+        const res = await putReq(
+          "http://localhost:8800/api/users/readNotifications"
+        );
+      }
+      setNotification(false);
+      navigate("/notifications");
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -76,10 +90,12 @@ const Navbar = () => {
                 <HomeIcon />
               </Link>
               <div>
-                <div onClick={()=>{navigate('/notifications')}} className="cursor-pointer">
-                <NotificationsIcon />
+                <div onClick={notificationClick} className="cursor-pointer">
+                  <NotificationsIcon />
                 </div>
-                {notification && <div className="text-red-700 rounded-full right-16 top-8 text-xs h-2 w-2 bg-red-700 absolute"></div>}
+                {notification && (
+                  <div className="text-red-700 rounded-full right-16 top-8 text-xs h-2 w-2 bg-red-700 absolute"></div>
+                )}
               </div>
               {/* <Link to="/post">Posts</Link> */}
 
