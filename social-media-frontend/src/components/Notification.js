@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
+import AppContext from "../AppContext";
 
 const Notification = (props) => {
+  const { getReq } = useContext(AppContext);
   const [message, setMessage] = useState();
   const navigate = useNavigate();
 
@@ -23,10 +25,20 @@ const Notification = (props) => {
     }
   }, []);
 
-  const handleNotificationClick = () => {
+  const handleNotificationClick = async () => {
     switch (props.notification.type) {
       case 0:
         navigate(`/user/profile/${props.notification.fromUserId}`);
+        break;
+      case 1:
+        const res = await getReq(
+          `http://localhost:8800/api/posts/${props.notification.postId}`
+        );
+        if (res.ok) {
+          const post = await res.json();
+          navigate(`/post/${props.notification.postId}`, { state: { post } });
+        }
+        break;
     }
   };
 
