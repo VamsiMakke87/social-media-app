@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { formatDistanceToNow } from "date-fns";
@@ -13,10 +13,23 @@ const Replies = (props) => {
   const [liked, setLiked] = useState(
     props.reply.likes.includes(loggedInUser._id)
   );
+  const replyRef = useRef();
   const replyMenuRef = useRef();
+  const [borderColor, setBorderColor] = useState();
   const [replyMenuOpen, setReplyMenuOpen] = useState(false);
   const [deleteReplyMenu, setDeleteReplyMenu] = useState(false);
-  const navigate= useNavigate();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      if (props.targetId && props.targetId == reply._id) {
+        replyRef.current.scrollIntoView({ behavior: "smooth" });
+        setBorderColor("border-black border-5");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
 
   const toggleLike = async () => {
     const res = await putReq(
@@ -65,9 +78,17 @@ const Replies = (props) => {
   };
 
   return (
-    <div className="bg-gray-200 border p-2 rounded">
+    <div
+      ref={replyRef}
+      className={`bg-gray-200  border p-2 ${borderColor} rounded`}
+    >
       <div className="flex">
-        <div className="flex space-x-1 items-center cursor-pointer" onClick={()=>{navigate(`/user/profile/${reply.userId}`)}}>
+        <div
+          className="flex space-x-1 items-center cursor-pointer"
+          onClick={() => {
+            navigate(`/user/profile/${reply.userId}`);
+          }}
+        >
           <img className="rounded-full h-9 w-9" src={reply.profilePic} />
           <div>
             <div className="text-sm font-semibold">{reply.username}</div>

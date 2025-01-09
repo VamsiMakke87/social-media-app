@@ -22,6 +22,7 @@ const Comment = (props) => {
   const [replies, setReplies] = useState([]);
   const [replyClicked, setReplyClicked] = useState(false);
   const commentMenuRef = useRef();
+  const [borderColor, setBorderColor] = useState();
   const [commentMenuOpen, setCommentMenuOpen] = useState(false);
   const [deleteCommentMenu, setDeleteCommentMenu] = useState(false);
   const navigate = useNavigate();
@@ -37,6 +38,8 @@ const Comment = (props) => {
   useEffect(() => {
     if (props.targetId) {
       if (props.targetId === comment._id) {
+        commentRef.current.scrollIntoView({ behavior: "smooth" });
+        setBorderColor("border-black");
       } else if (props.targetCommentId === comment._id) {
         setReplyClicked(true);
       }
@@ -130,7 +133,10 @@ const Comment = (props) => {
     }
   };
   return (
-    <div ref={commentRef} className="mt-1 p-2 rounded border  bg-gray-100">
+    <div
+      ref={commentRef}
+      className={`mt-1 p-2 rounded border  bg-gray-100 ${borderColor} `}
+    >
       <div className="flex">
         <div
           className="flex  space-x-1 items-center cursor-pointer"
@@ -229,6 +235,7 @@ const Comment = (props) => {
               <Replies
                 key={reply._id}
                 reply={reply}
+                targetId={props.targetId}
                 loadReplies={loadReplies}
               />
             ))}

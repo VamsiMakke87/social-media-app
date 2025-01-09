@@ -8,7 +8,6 @@ const AuthComponent = ({ children }) => {
     try {
       const decoded = jwtDecode(token);
       if (!decoded || !decoded.exp) {
-        console.log('here');
         return true;
       }
       const currentTime = Math.floor(Date.now() / 1000);

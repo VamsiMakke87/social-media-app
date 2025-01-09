@@ -6,6 +6,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import HomeIcon from "@mui/icons-material/Home";
 import CloseIcon from "@mui/icons-material/Close";
 import AppContext from "../AppContext";
+import { io, WebSocket } from "socket.io-client";
 
 const Navbar = () => {
   const { loggedInUser, putReq } = useContext(AppContext);
@@ -17,6 +18,22 @@ const Navbar = () => {
   const profileRef = useRef();
   const searchRef = useRef();
   const navigate = useNavigate();
+  const socketURL = process.env.REACT_APP_SOCKET_URL;
+
+
+  useEffect(() => {
+    const socket = io(socketURL, {
+      query: { userId: loggedInUser._id },
+    });
+
+    socket.on("new_notification", (data) => {
+      setNotification(true);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [loggedInUser._id]);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);

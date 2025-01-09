@@ -7,12 +7,12 @@ import Home from "./components/Home";
 import AppContext from "./AppContext";
 import Search from "./components/Search";
 import Settings from "./components/Settings";
-import Demo from "./components/Demo";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
 import AuthComponent from "./components/AuthComponent";
 import Notifications from "./components/Notifications";
+import { jwtDecode } from "jwt-decode";
 import ErrorPage from "./components/ErrorPage";
 
 const App = () => {
@@ -20,10 +20,11 @@ const App = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-    if (userId && token) {
+    if (token) {
       (async () => {
+        const decode = jwtDecode(token);
+        const userId = decode.id;
         await loadUser(userId);
       })();
     }
@@ -215,7 +216,6 @@ const App = () => {
                   </AuthComponent>
                 }
               />
-              <Route path="/demo" element={<Demo />} />
               <Route path="/logout" element={<Logout />} />
               <Route path="/*" element={<ErrorPage />} />
             </Routes>
