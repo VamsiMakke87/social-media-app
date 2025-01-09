@@ -218,7 +218,7 @@ const App = () => {
                 }
               />
               <Route
-                path="/Notifications"
+                path="/notifications"
                 element={
                   <AuthComponent>
                     <Notifications />
