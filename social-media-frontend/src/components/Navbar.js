@@ -53,7 +53,7 @@ const Navbar = () => {
     try {
       if (notification) {
         const res = await putReq(
-          "http://localhost:8800/api/users/readNotifications"
+          "/api/users/readNotifications"
         );
       }
       setNotification(false);

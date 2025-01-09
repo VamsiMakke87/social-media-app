@@ -16,10 +16,9 @@ const Search = () => {
 
   const searchUsers = async () => {
     const res = await getReq(
-      `http://localhost:8800/api/users/search/?username=${username}`
+      `/api/users/search/?username=${username}`
     );
     if (res.ok) {
-      console.log("here");
       const jsonData = await res.json();
       setUsers(jsonData);
     }else{

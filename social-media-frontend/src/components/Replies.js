@@ -33,7 +33,7 @@ const Replies = (props) => {
 
   const toggleLike = async () => {
     const res = await putReq(
-      `http://localhost:8800/api/comment/reply/like/${reply._id}`,
+      `/api/comment/reply/like/${reply._id}`,
       { userId: loggedInUser._id }
     );
 
@@ -67,7 +67,7 @@ const Replies = (props) => {
 
   const deleteReply = async () => {
     const res = await delReq(
-      `http://localhost:8800/api/comment/reply/${reply._id}`,
+      `/api/comment/reply/${reply._id}`,
       {
         userId: loggedInUser._id,
       }

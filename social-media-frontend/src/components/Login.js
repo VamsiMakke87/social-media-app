@@ -18,7 +18,7 @@ const Login = () => {
     const password = passwordRef.current.value;
     setMessage();
     if (email && password) {
-      const res = await postReq("http://localhost:8800/api/auth/login", {
+      const res = await postReq("/api/auth/login", {
         email: emailRef.current.value,
         password: passwordRef.current.value,
       });

@@ -48,7 +48,7 @@ const Comment = (props) => {
 
   const toggleLike = async () => {
     const res = await putReq(
-      `http://localhost:8800/api/comment/like/${comment._id}`,
+      `/api/comment/like/${comment._id}`,
       { userId: loggedInUser._id }
     );
 
@@ -75,7 +75,7 @@ const Comment = (props) => {
 
   const loadReplies = async () => {
     const res = await getReq(
-      `http://localhost:8800/api/comment/reply/all/${comment._id}`
+      `/api/comment/reply/all/${comment._id}`
     );
 
     if (res.ok) {
@@ -101,7 +101,7 @@ const Comment = (props) => {
       };
 
       const res = await postReq(
-        "http://localhost:8800/api/comment/reply",
+        "/api/comment/reply",
         data
       );
       if (res.ok) await loadReplies();
@@ -123,7 +123,7 @@ const Comment = (props) => {
 
   const deleteComment = async () => {
     const res = await delReq(
-      `http://localhost:8800/api/comment/${comment._id}`,
+      `/api/comment/${comment._id}`,
       {
         userId: loggedInUser._id,
       }

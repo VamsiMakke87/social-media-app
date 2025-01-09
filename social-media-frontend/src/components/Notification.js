@@ -60,7 +60,7 @@ const Notification = (props) => {
 
   const openPost = async (targetId, targetCommentId) => {
     const res = await getReq(
-      `http://localhost:8800/api/posts/${props.notification.postId}`
+      `/api/posts/${props.notification.postId}`
     );
     if (res.ok) {
       const post = await res.json();

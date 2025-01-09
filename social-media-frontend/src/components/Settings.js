@@ -49,7 +49,7 @@ const Settings = () => {
       formData.append("userId", loggedInUser._id);
       formData.append("file", file);
       const res = await putReqFile(
-        "http://localhost:8800/api/users/profilepic",
+        "/api/users/profilepic",
         formData
       );
       if (res.ok) {
@@ -65,7 +65,7 @@ const Settings = () => {
     if (newUsername) {
       try {
         const res = await putReq(
-          `http://localhost:8800/api/users/${loggedInUser._id}`,
+          `/api/users/${loggedInUser._id}`,
           {
             userId: loggedInUser._id,
             username: newUsername,

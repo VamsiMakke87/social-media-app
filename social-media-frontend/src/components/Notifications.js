@@ -16,7 +16,7 @@ const Notifications = () => {
 
   const loadNotifications = async () => {
     const res = await getReq(
-      `http://localhost:8800/api/users/notifications/${loggedInUser._id}`
+      `/api/users/notifications/${loggedInUser._id}`
     );
 
     if (res.ok) {

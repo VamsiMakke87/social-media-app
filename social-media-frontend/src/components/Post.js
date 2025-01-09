@@ -47,7 +47,7 @@ const Post = (props) => {
 
   const toggleLike = async () => {
     const res = await putReq(
-      `http://localhost:8800/api/posts/like/${post._id}`,
+      `/api/posts/like/${post._id}`,
       { userId: loggedInUser._id }
     );
 
@@ -70,7 +70,7 @@ const Post = (props) => {
 
   const loadComments = async () => {
     const res = await getReq(
-      `http://localhost:8800/api/comment/all/${post._id}`
+      `/api/comment/all/${post._id}`
     );
     if (res.ok) {
       const jsonData = await res.json();
@@ -100,7 +100,7 @@ const Post = (props) => {
         description: comment,
       };
       setCommentCursor("cursor-wait");
-      const res = await postReq("http://localhost:8800/api/comment/", data);
+      const res = await postReq("/api/comment/", data);
       if (res.ok) await loadComments();
       setCommentCursor("cursor-pointer");
       setCommentClicked(true);
@@ -120,7 +120,7 @@ const Post = (props) => {
   };
 
   const deletePost = async () => {
-    const res = await delReq(`http://localhost:8800/api/posts/${post._id}`, {
+    const res = await delReq(`/api/posts/${post._id}`, {
       userId: loggedInUser._id,
     });
     if (res.ok) {

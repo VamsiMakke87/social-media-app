@@ -30,7 +30,7 @@ const Home = () => {
 
   const loadPosts = async () => {
     const res = await getReq(
-      `http://localhost:8800/api/posts/feed/all/${loggedInUser._id}`
+      `/api/posts/feed/all/${loggedInUser._id}`
     );
     if (res.ok) {
       const postsData = await res.json();
@@ -49,7 +49,7 @@ const Home = () => {
       setPosting(true);
       setPreview(null);
       const res = await postReqFile(
-        "http://localhost:8800/api/posts",
+        "/api/posts",
         formData
       );
       if (res.ok) await loadPosts();

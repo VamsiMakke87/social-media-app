@@ -18,6 +18,7 @@ import ErrorPage from "./components/ErrorPage";
 const App = () => {
   const [posts, setPosts] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const backendURL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -31,7 +32,7 @@ const App = () => {
   }, []);
 
   const loadUser = async (userId) => {
-    const res = await getReq(`http://localhost:8800/api/users/${userId}`);
+    const res = await getReq(`/api/users/${userId}`);
 
     if (res.ok) {
       const jsonData = await res.json();
@@ -41,7 +42,7 @@ const App = () => {
 
   const getReq = async (url) => {
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${backendURL}${url}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -56,7 +57,7 @@ const App = () => {
 
   const postReq = async (url, data) => {
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${backendURL}${url}`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -73,7 +74,7 @@ const App = () => {
 
   const postReqFile = async (url, data) => {
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${backendURL}${url}`, {
         method: "POST",
         body: data,
         headers: {
@@ -89,7 +90,7 @@ const App = () => {
 
   const putReq = async (url, data) => {
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${backendURL}${url}`, {
         method: "PUT",
         body: JSON.stringify(data),
         headers: {
@@ -106,7 +107,7 @@ const App = () => {
 
   const putReqFile = async (url, data) => {
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${backendURL}${url}`, {
         method: "PUT",
         body: data,
         headers: {
@@ -122,7 +123,7 @@ const App = () => {
 
   const delReq = async (url, data) => {
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${backendURL}${url}`, {
         method: "DELETE",
         body: JSON.stringify(data),
         headers: {

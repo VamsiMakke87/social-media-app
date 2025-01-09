@@ -22,7 +22,7 @@ const Profile = () => {
 
   const loadUser = async () => {
     try {
-      const res = await getReq(`http://localhost:8800/api/users/${userId}`);
+      const res = await getReq(`/api/users/${userId}`);
       if (res.ok) {
         const jsonData = await res.json();
         setUser(jsonData);
@@ -37,7 +37,7 @@ const Profile = () => {
   };
 
   const loadPosts = async () => {
-    const res = await getReq(`http://localhost:8800/api/posts/feed/${userId}`);
+    const res = await getReq(`/api/posts/feed/${userId}`);
     if (res.ok) {
       const postsData = await res.json();
       setPosts(postsData);
@@ -60,7 +60,7 @@ const Profile = () => {
 
   const followUser = async () => {
     const res = await putReq(
-      `http://localhost:8800/api/users/follow/${user._id}`,
+      `/api/users/follow/${user._id}`,
       {
         userId: loggedInUser._id,
       }
@@ -76,7 +76,7 @@ const Profile = () => {
 
   const unFollowUser = async () => {
     const res = await putReq(
-      `http://localhost:8800/api/users/unfollow/${user._id}`,
+      `/api/users/unfollow/${user._id}`,
       {
         userId: loggedInUser._id,
       }
