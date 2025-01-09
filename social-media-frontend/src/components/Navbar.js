@@ -20,7 +20,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const socketURL = process.env.REACT_APP_SOCKET_URL;
 
-
   useEffect(() => {
     const socket = io(socketURL, {
       query: { userId: loggedInUser._id },
@@ -52,9 +51,7 @@ const Navbar = () => {
   const notificationClick = async () => {
     try {
       if (notification) {
-        const res = await putReq(
-          "/api/users/readNotifications"
-        );
+        const res = await putReq("/api/users/readNotifications");
       }
       setNotification(false);
       navigate("/notifications");
@@ -75,7 +72,7 @@ const Navbar = () => {
       {loggedInUser && (
         <>
           <div className="p-4 h-20 sticky top-0 bg-white flex items-center shadow-xl z-50">
-            <div className="w-1/5">
+            <div className="w-1/4">
               <Link className="text-2xl font-extrabold" to="/">
                 VamsiMakke
               </Link>
@@ -99,9 +96,9 @@ const Navbar = () => {
             <div className=" flex ml-auto space-x-6">
               <div
                 className="md:hidden cursor-pointer ml-auto"
-                onClick={toggleMenu}
+                onClick={(()=>{navigate('/search/')})}
               >
-                {menuOpen ? <CloseIcon /> : <SearchIcon />}
+                <SearchIcon />
               </div>
               <Link to="/home">
                 <HomeIcon />
@@ -149,25 +146,6 @@ const Navbar = () => {
                 )}
               </div>
             </div>
-          </div>
-          <div className="md:hidden">
-            {menuOpen && (
-              <div className="items-center sticky top-0 flex m-4 border-black rounded border-2 w-100 ">
-                <SearchIcon className="ml-1" />
-                <input
-                  className="appearance-non w-full  rounded  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white"
-                  type="text"
-                  ref={searchRef}
-                  placeholder="Enter Username"
-                />
-                <div
-                  onClick={searchUser}
-                  className="bg-black h text-white  h-full p-2 px-4 cursor-pointer"
-                >
-                  Search
-                </div>
-              </div>
-            )}
           </div>
         </>
       )}

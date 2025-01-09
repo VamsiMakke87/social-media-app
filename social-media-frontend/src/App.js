@@ -202,6 +202,14 @@ const App = () => {
                 }
               />
               <Route
+                path="/search"
+                element={
+                  <AuthComponent>
+                    <Search />
+                  </AuthComponent>
+                }
+              />
+              <Route
                 path="/settings"
                 element={
                   <AuthComponent>
