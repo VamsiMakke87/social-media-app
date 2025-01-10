@@ -18,6 +18,8 @@ import ErrorPage from "./components/ErrorPage";
 const App = () => {
   const [posts, setPosts] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [errorMsg, setErrorMsg] = useState();
+  const [successMsg, setSuccessMsg] = useState();
   const backendURL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -28,6 +30,17 @@ const App = () => {
       })();
     }
   }, []);
+
+  useEffect(() => {
+    if (errorMsg || successMsg) {
+      const timer = setTimeout(() => {
+        setErrorMsg("");
+        setSuccessMsg("");
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [errorMsg,successMsg]);
 
   const loadApp = async (token) => {
     const decode = jwtDecode(token);
@@ -158,11 +171,23 @@ const App = () => {
             loggedInUser,
             setLoggedInUser,
             loadUser,
-            loadApp
+            loadApp,
+            setErrorMsg,
+            setSuccessMsg
           }}
         >
           <Router>
             {loggedInUser && <Navbar />}
+            {errorMsg && (
+              <div className="fixed left-0 w-full bg-red-500 text-white text-center py-2 z-50">
+                {errorMsg}
+              </div>
+            )}
+            {successMsg && (
+              <div className="fixed left-0 w-full bg-green-500 text-white text-center py-2 z-50">
+                {successMsg}
+              </div>
+            )}
             <Routes>
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
