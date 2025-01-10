@@ -5,8 +5,9 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 const Login = () => {
-  const { postReq, loadApp } = useContext(AppContext);
-  const [message, setMessage] = useState();
+  const { postReq, loadApp, setErrorMsg, setSuccessMsg } =
+    useContext(AppContext);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -18,25 +19,29 @@ const Login = () => {
   }
 
   const login = async () => {
-    const email = emailRef.current.value;
-    const password = passwordRef.current.value;
-    setMessage();
-    if (email && password) {
-      const res = await postReq("/api/auth/login", {
-        email: emailRef.current.value,
-        password: passwordRef.current.value,
-      });
+    try {
+      const email = emailRef.current.value;
+      const password = passwordRef.current.value;
+      if (!error && email && password) {
+        const res = await postReq("/api/auth/login", {
+          email: emailRef.current.value,
+          password: passwordRef.current.value,
+        });
 
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("token", data.token);
-        await loadApp(data.token);
-        navigate("/");
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem("token", data.token);
+          setSuccessMsg('Login Successfull');
+          await loadApp(data.token);
+          navigate("/");
+        } else {
+          setErrorMsg("Invalid Credentials");
+        }
       } else {
-        setMessage("Invalid Credentials");
+        setErrorMsg("Please fill out the form correctly");
       }
-    } else {
-      setMessage("Please enter email and password");
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -44,11 +49,13 @@ const Login = () => {
     try {
       const email = emailRef.current.value;
       if (!email) {
-        setMessage("Email cannot be empty");
+        setError(true);
+        // setErrorMsg("Email cannot be empty");
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        setMessage("Please enter a valid email format");
+        setError(true);
+        // setErrorMsg("Please enter a valid email format");
       } else {
-        setMessage("");
+        setError(false);
       }
     } catch (err) {
       console.log(err);
@@ -65,6 +72,7 @@ const Login = () => {
         <div className="text-6xl  font-bold p-4 text-center">Login</div>
         <div className="mt-2">
           <div>Email:</div>
+          {error && <div className="text-red-700 text-sm">{"Please enter valid email address"}</div>}
           <input
             type="email"
             ref={emailRef}
@@ -118,7 +126,6 @@ const Login = () => {
         >
           Login
         </div>
-        <div className="mt-2 text-center text-red-700">{message}</div>
         <a
           onClick={signUp}
           className="text-center text-blue-700 block text-sm  cursor-pointer"
