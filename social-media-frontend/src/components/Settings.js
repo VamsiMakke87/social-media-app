@@ -3,7 +3,8 @@ import AppContext from "../AppContext";
 
 const Settings = () => {
   const [content, setContent] = useState("profile");
-  const { loggedInUser, putReqFile, putReq, loadUser } = useContext(AppContext);
+  const { loggedInUser, getReq, putReqFile, putReq, loadUser, setErrorMsg, setSuccessMsg } =
+    useContext(AppContext);
   const [file, setFile] = useState(null);
   const [editUsername, setEditUsername] = useState();
   const usernameRef = useRef();
@@ -48,37 +49,56 @@ const Settings = () => {
       const formData = new FormData();
       formData.append("userId", loggedInUser._id);
       formData.append("file", file);
-      const res = await putReqFile(
-        "/api/users/profilepic",
-        formData
-      );
+      const res = await putReqFile("/api/users/profilepic", formData);
       if (res.ok) {
         setFile(null);
+        setSuccessMsg('Profile Picture updated successfully');
         await loadUser(loggedInUser._id);
       }
+    }
+  };
+
+  const usernameExists = async (username) => {
+    try {
+      const res = await getReq(`/api/auth/exists?username=${username}`);
+      if (res.ok) {
+        const data = await res.json();
+        return data.isExists;
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      setErrorMsg("Operation Unsuccessfull, please try again");
+      return false;
     }
   };
 
   const updateUsername = async () => {
     const newUsername = usernameRef.current.value;
 
-    if (newUsername) {
+    if (newUsername && newUsername.length > 2) {
       try {
-        const res = await putReq(
-          `/api/users/${loggedInUser._id}`,
-          {
+        // console.log(usernameExists(newUsername));
+        if (!await usernameExists(newUsername)) {
+          const res = await putReq(`/api/users/${loggedInUser._id}`, {
             userId: loggedInUser._id,
             username: newUsername,
-          }
-        );
+          });
 
-        if (res.ok) {
-          setEditUsername(false);
-          await loadUser(loggedInUser._id);
+          if (res.ok) {
+            setEditUsername(false);
+            setSuccessMsg('Username updated successfully');
+            await loadUser(loggedInUser._id);
+          }
+        } else {
+          setErrorMsg("Username already exists");
         }
       } catch (err) {
         console.log(err);
+        setErrorMsg("Operation Unsuccessfull, Please try again");
       }
+    } else {
+      setErrorMsg("Username must be between 3 and 20 characters long.");
     }
   };
 
