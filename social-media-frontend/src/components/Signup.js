@@ -6,11 +6,17 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 
 const Signup = () => {
   const { getReq, postReq, setLoggedInUser, setToken } = useContext(AppContext);
-  const [error, setError] = useState({});
+  const [error, setError] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [message, setMessage] = useState();
   const [passwordType, setPasswordType] = useState("password");
-  const [passwordFocus, setPasswordFocus] = useState("");
-  const [confirmPasswordFocus, setConfirmPasswordFocus] = useState("");
+  const [passwordFocus, setPasswordFocus] = useState("border-slate-400");
+  const [confirmPasswordFocus, setConfirmPasswordFocus] =
+    useState("border-slate-400");
   const [confirmPasswordType, setConfirmPasswordType] = useState("password");
   const navigate = useNavigate();
   const emailRef = useRef();
@@ -161,10 +167,11 @@ const Signup = () => {
         alert("Profile created successfully");
         navigate("/login");
       } else {
-        setMessage("Invalid Credentials");
+        setMessage("Profile creation failed");
       }
     } else {
       console.log(error);
+      console.log(usernameRef.current.value);
       setMessage("Please fill the form correctly");
     }
   };
@@ -186,10 +193,10 @@ const Signup = () => {
             type="text"
             ref={usernameRef}
             onChange={validateUsername}
-            className="outline-none hover:border-black focus:border-black border border-2 border-slate-300 rounded h-10 p-2 w-full"
+            className="outline-none hover:border-black focus:border-black border border-2 border-slate-400 rounded h-10 p-2 w-full"
           />
         </div>
-        <div className="mt-2">
+        <div className="mt-1">
           <div>Email:</div>
           {error.email && (
             <div className="text-red-700 text-sm">{error.email}</div>
@@ -201,7 +208,7 @@ const Signup = () => {
             className="outline-none hover:border-black focus:border-black border border-2 border-slate-400 rounded h-10 p-2 w-full"
           />
         </div>
-        <div className="mt-2">
+        <div className="mt-1">
           <div>Password:</div>
           {error.password && (
             <div className="text-red-700 text-sm">{error.password}</div>
@@ -216,7 +223,7 @@ const Signup = () => {
                 setPasswordFocus("border-black");
               }}
               onBlur={() => {
-                setPasswordFocus("border-slate-300");
+                setPasswordFocus("border-slate-400");
               }}
               onChange={validatePassword}
               className=" outline-none  rounded h-10 w-full"
@@ -242,7 +249,7 @@ const Signup = () => {
             )}
           </div>
         </div>
-        <div className="mt-2">
+        <div className="mt-1">
           <div>Confirm&nbsp;Password:</div>
           {error.confirmPassword && (
             <div className="text-red-700 text-sm">{error.confirmPassword}</div>
@@ -257,7 +264,7 @@ const Signup = () => {
                 setConfirmPasswordFocus("border-black");
               }}
               onBlur={() => {
-                setConfirmPasswordFocus("border-slate-300");
+                setConfirmPasswordFocus("border-slate-400");
               }}
               onChange={validateConfirmPassword}
               className=" outline-none  rounded h-10 w-full"
@@ -283,12 +290,9 @@ const Signup = () => {
             )}
           </div>
         </div>
-        <a className="underline text-xs text-blue-700 cursor-pointer">
-          Forgot Password?
-        </a>
         <div
           onClick={signUp}
-          className="w-full p-2 cursor-pointer mt-2 rounded justify-items-center border  text-center border-black hover:bg-black hover:text-white"
+          className="w-full p-2 cursor-pointer mt-3 rounded justify-items-center border  text-center border-black hover:bg-black hover:text-white"
         >
           Sign Up
         </div>

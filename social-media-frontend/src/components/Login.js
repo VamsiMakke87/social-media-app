@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
   const emailRef = useRef();
   const passwordRef = useRef();
-  const [passwordFocus, setPasswordFocus] = useState();
+  const [passwordFocus, setPasswordFocus] = useState("border-slate-400");
   const [passwordType, setPasswordType] = useState("password");
 
   if (localStorage.getItem("token")) {
@@ -84,7 +84,7 @@ const Login = () => {
                 setPasswordFocus("border-black");
               }}
               onBlur={() => {
-                setPasswordFocus("border-slate-300");
+                setPasswordFocus("border-slate-400");
               }}
               className=" outline-none  rounded h-10 w-full"
             />
