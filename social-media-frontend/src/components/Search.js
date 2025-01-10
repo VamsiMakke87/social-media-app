@@ -6,14 +6,14 @@ import SearchIcon from "@mui/icons-material/Search";
 const Search = () => {
   const { username } = useParams(); // Destructure username from the URL params
   const [usernameState, setUsernameState] = useState(username); // Use the value to initialize the state
-
+  const [message, setMessage] = useState("Enter atleast 3 characters");
   const { getReq } = useContext(AppContext);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
   const searchRef = useRef();
 
   useEffect(() => {
-    if (usernameState) {
+    if (usernameState && usernameState.length>2) {
       (async () => {
         await searchUsers();
       })();
@@ -24,28 +24,35 @@ const Search = () => {
     const res = await getReq(`/api/users/search/?username=${usernameState}`);
     if (res.ok) {
       const jsonData = await res.json();
+      setMessage();
       setUsers(jsonData);
     } else {
+      setMessage("No users found");
       setUsers([]);
     }
   };
 
   const searchUser = async () => {
     const value = searchRef.current.value;
-    if (value) {
+    if (value && value.length > 2) {
       setUsernameState(value);
       navigate(`/search/${value}`);
+    } else {
+      setMessage("Enter atleast 3 characters");
+      setUsers([]);
+      setUsernameState(value);
     }
   };
 
   return (
     <>
-      <div className="md:hidden items-center sticky top-0 flex m-4 border-black rounded border-2 w-100 ">
+      <div className="items-center sticky top-0 flex m-4 border-black rounded border-2 w-100 ">
         <SearchIcon className="ml-1" />
         <input
           className="appearance-non w-full  rounded  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white"
           type="text"
           ref={searchRef}
+          onChange={searchUser}
           placeholder="Enter Username"
         />
         <div
@@ -56,9 +63,8 @@ const Search = () => {
         </div>
       </div>
       <div className="justify-items-center">
-        {users.length === 0 ? (
-          <p>No users found</p>
-        ) : (
+        <p>{message}</p>
+        {users.length > 0 &&
           users.map((user) => (
             <div
               key={user._id}
@@ -74,8 +80,7 @@ const Search = () => {
               />
               <h2 className="font-bold m-2">{user.username}</h2>
             </div>
-          ))
-        )}
+          ))}
       </div>
     </>
   );

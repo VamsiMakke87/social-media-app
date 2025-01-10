@@ -77,7 +77,7 @@ const Navbar = () => {
                 VamsiMakke
               </Link>
             </div>
-            <div className="hidden md:flex items-center border-black rounded border-2 w-1/2 mr-4">
+            {/* <div className="hidden md:flex items-center border-black rounded border-2 w-1/2 mr-4">
               <SearchIcon className=" ml-1" />
               <input
                 className="appearance-none w-full  rounded  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white"
@@ -91,11 +91,11 @@ const Navbar = () => {
               >
                 Search
               </div>
-            </div>
+            </div> */}
 
             <div className=" flex ml-auto space-x-6">
               <div
-                className="md:hidden cursor-pointer ml-auto"
+                className="cursor-pointer ml-auto"
                 onClick={(()=>{navigate('/search/')})}
               >
                 <SearchIcon />
