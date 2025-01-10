@@ -295,7 +295,7 @@ const Signup = () => {
         </div>
         <div
           onClick={login}
-          className="text-center block text-sm  cursor-pointer"
+          className="text-center block text-sm mt-1  cursor-pointer"
         >
           Have an account? <a className="text-blue-700">Login</a>
         </div>

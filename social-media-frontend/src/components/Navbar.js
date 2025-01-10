@@ -77,22 +77,6 @@ const Navbar = () => {
                 VamsiMakke
               </Link>
             </div>
-            {/* <div className="hidden md:flex items-center border-black rounded border-2 w-1/2 mr-4">
-              <SearchIcon className=" ml-1" />
-              <input
-                className="appearance-none w-full  rounded  py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white"
-                type="text"
-                ref={searchRef}
-                placeholder="Enter Username"
-              />
-              <div
-                onClick={searchUser}
-                className="bg-black h text-white  h-full p-2 px-4 cursor-pointer"
-              >
-                Search
-              </div>
-            </div> */}
-
             <div className=" flex ml-auto space-x-6">
               <div
                 className="cursor-pointer ml-auto"
@@ -126,7 +110,7 @@ const Navbar = () => {
                   className="cursor-pointer h-6 w-6 rounded-full"
                 />
                 {profileMenuOpen && (
-                  <div className="absolute bg-white border rounded w-40 right-2 p-2 space-y-1 shadow-2xl">
+                  <div className="absolute bg-white border rounded w-40 right-2 p-2 z-50 space-y-1 shadow-2xl">
                     <Link to={`user/profile/${loggedInUser._id}`}>
                       <div className="px-4 py-2 cursor-pointer hover:bg-gray-100">
                         Profile

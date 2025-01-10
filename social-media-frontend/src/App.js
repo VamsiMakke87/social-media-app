@@ -36,7 +36,7 @@ const App = () => {
       const timer = setTimeout(() => {
         setErrorMsg("");
         setSuccessMsg("");
-      }, 5000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
@@ -179,12 +179,12 @@ const App = () => {
           <Router>
             {loggedInUser && <Navbar />}
             {errorMsg && (
-              <div className="fixed left-0 w-full bg-red-500 text-white text-center py-2 z-50">
+              <div className="fixed left-0 w-full bg-red-500 text-white text-center py-2 z-40">
                 {errorMsg}
               </div>
             )}
             {successMsg && (
-              <div className="fixed left-0 w-full bg-green-500 text-white text-center py-2 z-50">
+              <div className="fixed left-0 w-full bg-green-500 text-white text-center py-2 z-40">
                 {successMsg}
               </div>
             )}
