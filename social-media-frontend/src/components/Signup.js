@@ -1,11 +1,17 @@
 import React, { useContext, useRef, useState } from "react";
 import AppContext from "../AppContext";
 import { Navigate, useNavigate } from "react-router-dom";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 const Signup = () => {
   const { getReq, postReq, setLoggedInUser, setToken } = useContext(AppContext);
   const [error, setError] = useState({});
   const [message, setMessage] = useState();
+  const [passwordType, setPasswordType] = useState("password");
+  const [passwordFocus, setPasswordFocus] = useState("");
+  const [confirmPasswordFocus, setConfirmPasswordFocus] = useState("");
+  const [confirmPasswordType, setConfirmPasswordType] = useState("password");
   const navigate = useNavigate();
   const emailRef = useRef();
   const usernameRef = useRef();
@@ -130,7 +136,7 @@ const Signup = () => {
         ...prev,
         confirmPassword: "Confirm Password cannot be empty",
       }));
-    } else if (confirmPassword !== password) {
+    } else if (!password || confirmPassword !== password) {
       setError((prev) => ({
         ...prev,
         confirmPassword: "Password and Confirm Password does not match",
@@ -180,7 +186,7 @@ const Signup = () => {
             type="text"
             ref={usernameRef}
             onChange={validateUsername}
-            className="outline outline-slate-300 focus:outline-black rounded h-10 p-2 w-full"
+            className="outline-none hover:border-black focus:border-black border border-2 border-slate-300 rounded h-10 p-2 w-full"
           />
         </div>
         <div className="mt-2">
@@ -192,7 +198,7 @@ const Signup = () => {
             type="email"
             ref={emailRef}
             onChange={validateEmail}
-            className="outline outline-slate-300 focus:outline-black rounded h-10 p-2 w-full"
+            className="outline-none hover:border-black focus:border-black border border-2 border-slate-400 rounded h-10 p-2 w-full"
           />
         </div>
         <div className="mt-2">
@@ -200,13 +206,40 @@ const Signup = () => {
           {error.password && (
             <div className="text-red-700 text-sm">{error.password}</div>
           )}
-          <div className="f">
+          <div
+            className={`flex items-center px-2 w-full hover:border-black ${passwordFocus} border border-2 rounded `}
+          >
             <input
-              type="password"
+              type={passwordType}
               ref={passwordRef}
+              onFocus={() => {
+                setPasswordFocus("border-black");
+              }}
+              onBlur={() => {
+                setPasswordFocus("border-slate-300");
+              }}
               onChange={validatePassword}
-              className="outline outline-slate-300 focus:outline-black rounded h-10 p-2 w-full"
+              className=" outline-none  rounded h-10 w-full"
             />
+            {passwordType === "password" ? (
+              <div
+                onClick={() => {
+                  setPasswordType("text");
+                }}
+                className="cursor-pointer"
+              >
+                <VisibilityOutlinedIcon />
+              </div>
+            ) : (
+              <div
+                onClick={() => {
+                  setPasswordType("password");
+                }}
+                className="cursor-pointer"
+              >
+                <VisibilityOffOutlinedIcon />
+              </div>
+            )}
           </div>
         </div>
         <div className="mt-2">
@@ -214,12 +247,41 @@ const Signup = () => {
           {error.confirmPassword && (
             <div className="text-red-700 text-sm">{error.confirmPassword}</div>
           )}
-          <input
-            type="password"
-            ref={confirmPasswordRef}
-            onChange={validateConfirmPassword}
-            className="outline outline-slate-300 focus:outline-black rounded h-10 p-2 w-full"
-          />
+          <div
+            className={`flex items-center px-2 w-full hover:border-black ${confirmPasswordFocus} border border-2 rounded `}
+          >
+            <input
+              type={confirmPasswordType}
+              ref={confirmPasswordRef}
+              onFocus={() => {
+                setConfirmPasswordFocus("border-black");
+              }}
+              onBlur={() => {
+                setConfirmPasswordFocus("border-slate-300");
+              }}
+              onChange={validateConfirmPassword}
+              className=" outline-none  rounded h-10 w-full"
+            />
+            {confirmPasswordType === "password" ? (
+              <div
+                onClick={() => {
+                  setConfirmPasswordType("text");
+                }}
+                className="cursor-pointer"
+              >
+                <VisibilityOutlinedIcon />
+              </div>
+            ) : (
+              <div
+                onClick={() => {
+                  setConfirmPasswordType("password");
+                }}
+                className="cursor-pointer"
+              >
+                <VisibilityOffOutlinedIcon />
+              </div>
+            )}
+          </div>
         </div>
         <a className="underline text-xs text-blue-700 cursor-pointer">
           Forgot Password?

@@ -1,13 +1,17 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import AppContext from "../AppContext";
 import { Navigate, useNavigate } from "react-router-dom";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 const Login = () => {
-  const { postReq, loadApp} = useContext(AppContext);
+  const { postReq, loadApp } = useContext(AppContext);
   const [message, setMessage] = useState();
   const navigate = useNavigate();
   const emailRef = useRef();
   const passwordRef = useRef();
+  const [passwordFocus, setPasswordFocus] = useState();
+  const [passwordType, setPasswordType] = useState("password");
 
   if (localStorage.getItem("token")) {
     return <Navigate to="/" replace />;
@@ -36,6 +40,21 @@ const Login = () => {
     }
   };
 
+  const validateEmail = async () => {
+    try {
+      const email = emailRef.current.value;
+      if (!email) {
+        setMessage("Email cannot be empty");
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setMessage("Please enter a valid email format");
+      } else {
+        setMessage("");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const signUp = () => {
     navigate("/signup");
   };
@@ -44,21 +63,51 @@ const Login = () => {
     <div className="bg-slate-100 h-screen flex items-center  justify-center">
       <div className="p-6 bg-white h-fit mt-10 border rounded shadow-xl md:w-4/12 w-10/12">
         <div className="text-6xl  font-bold p-4 text-center">Login</div>
-        <div className="space-y-1">
+        <div className="mt-2">
           <div>Email:</div>
           <input
             type="email"
             ref={emailRef}
-            className="outline outline-slate-300 focus:outline-black rounded h-10 p-2 w-full"
+            onChange={validateEmail}
+            className="outline-none hover:border-black focus:border-black border border-2 border-slate-400 rounded h-10 p-2 w-full"
           />
         </div>
-        <div className="space-y-1 mt-3">
+        <div className="mt-2">
           <div>Password:</div>
-          <input
-            type="password"
-            ref={passwordRef}
-            className="outline outline-slate-300 focus:outline-black rounded h-10 p-2 w-full"
-          />
+          <div
+            className={`flex items-center px-2 w-full hover:border-black ${passwordFocus} border border-2 rounded `}
+          >
+            <input
+              type={passwordType}
+              ref={passwordRef}
+              onFocus={() => {
+                setPasswordFocus("border-black");
+              }}
+              onBlur={() => {
+                setPasswordFocus("border-slate-300");
+              }}
+              className=" outline-none  rounded h-10 w-full"
+            />
+            {passwordType === "password" ? (
+              <div
+                onClick={() => {
+                  setPasswordType("text");
+                }}
+                className="cursor-pointer"
+              >
+                <VisibilityOutlinedIcon />
+              </div>
+            ) : (
+              <div
+                onClick={() => {
+                  setPasswordType("password");
+                }}
+                className="cursor-pointer"
+              >
+                <VisibilityOffOutlinedIcon />
+              </div>
+            )}
+          </div>
         </div>
         <a className="underline text-xs text-blue-700 cursor-pointer">
           Forgot Password?
