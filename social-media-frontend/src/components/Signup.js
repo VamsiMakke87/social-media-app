@@ -5,14 +5,13 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 const Signup = () => {
-  const { getReq, postReq, setLoggedInUser, setToken } = useContext(AppContext);
+  const { getReq, postReq, setErrorMsg, setSuccessMsg} = useContext(AppContext);
   const [error, setError] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-  const [message, setMessage] = useState();
   const [passwordType, setPasswordType] = useState("password");
   const [passwordFocus, setPasswordFocus] = useState("border-slate-400");
   const [confirmPasswordFocus, setConfirmPasswordFocus] =
@@ -164,15 +163,13 @@ const Signup = () => {
       });
 
       if (res.ok) {
-        alert("Profile created successfully");
+        setSuccessMsg("Profile created successfully");
         navigate("/login");
       } else {
-        setMessage("Profile creation failed");
+        setErrorMsg("Profile creation failed");
       }
     } else {
-      console.log(error);
-      console.log(usernameRef.current.value);
-      setMessage("Please fill the form correctly");
+      setErrorMsg("Please fill the form correctly");
     }
   };
 
@@ -296,7 +293,6 @@ const Signup = () => {
         >
           Sign Up
         </div>
-        <div className="mt-2 text-center text-red-700">{message}</div>
         <div
           onClick={login}
           className="text-center block text-sm  cursor-pointer"
