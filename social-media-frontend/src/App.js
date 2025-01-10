@@ -24,12 +24,16 @@ const App = () => {
     const token = localStorage.getItem("token");
     if (token) {
       (async () => {
-        const decode = jwtDecode(token);
-        const userId = decode.id;
-        await loadUser(userId);
+        await loadApp(token);
       })();
     }
   }, []);
+
+  const loadApp = async (token) => {
+    const decode = jwtDecode(token);
+    const userId = decode.id;
+    await loadUser(userId);
+  };
 
   const loadUser = async (userId) => {
     const res = await getReq(`/api/users/${userId}`);
@@ -154,6 +158,7 @@ const App = () => {
             loggedInUser,
             setLoggedInUser,
             loadUser,
+            loadApp
           }}
         >
           <Router>

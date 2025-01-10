@@ -15,6 +15,7 @@ const Home = () => {
     postReqFile,
     putReq,
     delReq,
+    loadApp
   } = useContext(AppContext);
   const postRef = useRef();
   const [file, setFile] = useState();

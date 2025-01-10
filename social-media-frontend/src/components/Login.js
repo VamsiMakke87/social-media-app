@@ -3,13 +3,13 @@ import AppContext from "../AppContext";
 import { Navigate, useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { postReq, loadUser } = useContext(AppContext);
+  const { postReq, loadApp} = useContext(AppContext);
   const [message, setMessage] = useState();
   const navigate = useNavigate();
   const emailRef = useRef();
   const passwordRef = useRef();
 
-  if (localStorage.getItem("userId")) {
+  if (localStorage.getItem("token")) {
     return <Navigate to="/" replace />;
   }
 
@@ -26,6 +26,7 @@ const Login = () => {
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem("token", data.token);
+        await loadApp(data.token);
         navigate("/");
       } else {
         setMessage("Invalid Credentials");
