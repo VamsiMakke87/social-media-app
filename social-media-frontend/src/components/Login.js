@@ -36,6 +36,7 @@ const Login = () => {
           navigate("/");
         }else if(res.status=== 403){
           setErrorMsg("Account not activated, please activate your account to login");
+          navigate('/activate');
         }
          else {
           setErrorMsg("Invalid Credentials");
