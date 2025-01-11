@@ -14,6 +14,7 @@ import AuthComponent from "./components/AuthComponent";
 import Notifications from "./components/Notifications";
 import { jwtDecode } from "jwt-decode";
 import ErrorPage from "./components/ErrorPage";
+import Activate from "./components/Activate";
 
 const App = () => {
   const [posts, setPosts] = useState(null);
@@ -191,6 +192,8 @@ const App = () => {
             <Routes>
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/activate" element={<Activate />} />
+              <Route path="/activate/:token" element={<Activate />} />
               <Route
                 path="/"
                 element={

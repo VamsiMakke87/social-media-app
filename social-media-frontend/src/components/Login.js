@@ -34,7 +34,10 @@ const Login = () => {
           setSuccessMsg('Login Successfull');
           await loadApp(data.token);
           navigate("/");
-        } else {
+        }else if(res.status=== 403){
+          setErrorMsg("Account not activated, please activate your account to login");
+        }
+         else {
           setErrorMsg("Invalid Credentials");
         }
       } else {
@@ -131,6 +134,12 @@ const Login = () => {
           className="text-center text-blue-700 block text-sm mt-1  cursor-pointer"
         >
           Create account
+        </a>
+        <a
+          onClick={()=>{navigate('/activate')}}
+          className="text-center text-blue-700 block text-sm mt-1  cursor-pointer"
+        >
+          Activate account
         </a>
       </div>
     </div>
