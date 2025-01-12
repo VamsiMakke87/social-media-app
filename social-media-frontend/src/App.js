@@ -15,6 +15,8 @@ import Notifications from "./components/Notifications";
 import { jwtDecode } from "jwt-decode";
 import ErrorPage from "./components/ErrorPage";
 import Activate from "./components/Activate";
+import ForgotPassword from "./components/ForgotPassword";
+import ForgotPasswordReq from "./components/ForgotPasswordReq";
 
 const App = () => {
   const [posts, setPosts] = useState(null);
@@ -194,6 +196,8 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/activate" element={<Activate />} />
               <Route path="/activate/:token" element={<Activate />} />
+              <Route path="/forgotpassword/" element={<ForgotPasswordReq />} />
+              <Route path="/forgotpassword/:token" element={<ForgotPassword />} />
               <Route
                 path="/"
                 element={

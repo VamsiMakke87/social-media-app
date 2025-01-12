@@ -1,15 +1,12 @@
 import React, { useContext, useRef, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import AppContext from "../AppContext";
-import { Navigate, useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
-const Signup = () => {
-  const { getReq, postReq, setErrorMsg, setSuccessMsg } =
-    useContext(AppContext);
+const ForgotPassword = () => {
+  const { token } = useParams();
   const [error, setError] = useState({
-    username: "",
-    email: "",
     password: "",
     confirmPassword: "",
   });
@@ -18,79 +15,16 @@ const Signup = () => {
   const [confirmPasswordFocus, setConfirmPasswordFocus] =
     useState("border-slate-400");
   const [confirmPasswordType, setConfirmPasswordType] = useState("password");
-  const navigate = useNavigate();
-  const emailRef = useRef();
-  const usernameRef = useRef();
+  const { setErrorMsg, setSuccessMsg, putReq } = useContext(AppContext);
+
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
 
-  if (localStorage.getItem("token")) {
-    return <Navigate to="/" replace />;
+  const navigate = useNavigate();
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
   }
-
-  const validateUsername = async () => {
-    try {
-      const username = usernameRef.current.value;
-      if (!username) {
-        setError((prev) => ({ ...prev, username: "Username cannot be empty" }));
-      } else if (username.length < 3 || username.length > 20) {
-        setError((prev) => ({
-          ...prev,
-          username: "Username must be between 3 and 20 characters long.",
-        }));
-      } else if (!/^[a-zA-Z0-9]{3,15}$/.test(username)) {
-        setError((prev) => ({
-          ...prev,
-          username: "Username must be alphanumeric characters only",
-        }));
-      } else {
-        const res = await getReq(`/api/auth/exists?username=${username}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.isExists)
-            setError((prev) => ({
-              ...prev,
-              username: "Username already exists",
-            }));
-          else
-            setError((prev) => {
-              const { username, ...rest } = prev;
-              return rest;
-            });
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const validateEmail = async () => {
-    try {
-      const email = emailRef.current.value;
-      if (!email) {
-        setError((prev) => ({ ...prev, email: "Email cannot be empty" }));
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        setError((prev) => ({
-          ...prev,
-          email: "Please enter a valid email format",
-        }));
-      } else {
-        const res = await getReq(`/api/auth/exists?email=${email}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.isExists)
-            setError((prev) => ({ ...prev, email: "Email already exists" }));
-          else
-            setError((prev) => {
-              const { email, ...rest } = prev;
-              return rest;
-            });
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const validatePassword = async () => {
     try {
@@ -155,72 +89,40 @@ const Signup = () => {
     }
   };
 
-  const signUp = async () => {
+  const updatePassword = async () => {
     try {
-      const username = usernameRef.current.value;
-      const email = emailRef.current.value;
       const password = passwordRef.current.value;
       const confirmPassword = confirmPasswordRef.current.value;
       if (
-        Object.keys(error).length == 0 &&
-        username &&
-        email &&
+        Object.keys(error).length === 0 &&
         password &&
         confirmPassword &&
         password === confirmPassword
       ) {
-        const res = await postReq("/api/auth/signup", {
-          username: username,
-          email: email,
+        const res = await putReq("/api/auth/forgotPassword", {
+          token: token,
           password: password,
         });
 
         if (res.ok) {
-          setSuccessMsg("Profile created successfully");
-          navigate("/login");
+          setSuccessMsg("Password updated successfully");
+        } else if (res.status === 404) {
+          setErrorMsg("User not found, please try again");
         } else {
-          setErrorMsg("Profile creation failed");
+          setErrorMsg("Error occured! Please try again");
         }
+        navigate("/login");
       } else {
-        setErrorMsg("Please fill the form correctly");
+        setErrorMsg("Please fill form correctly");
       }
     } catch (err) {
       console.log(err);
     }
   };
 
-  const login = () => {
-    navigate("/login");
-  };
-
   return (
     <div className="bg-slate-100 h-screen flex items-center  justify-center">
       <div className="p-6 bg-white h-fit mt-10 border rounded shadow-xl md:w-4/12 w-10/12">
-        <div className="text-6xl  font-bold p-4 text-center">Signup</div>
-        <div>
-          <div>Username:</div>
-          {error.username && (
-            <div className="text-red-700 text-sm">{error.username}</div>
-          )}
-          <input
-            type="text"
-            ref={usernameRef}
-            onChange={validateUsername}
-            className="outline-none hover:border-black focus:border-black border border-2 border-slate-400 rounded h-10 p-2 w-full"
-          />
-        </div>
-        <div className="mt-1">
-          <div>Email:</div>
-          {error.email && (
-            <div className="text-red-700 text-sm">{error.email}</div>
-          )}
-          <input
-            type="email"
-            ref={emailRef}
-            onChange={validateEmail}
-            className="outline-none hover:border-black focus:border-black border border-2 border-slate-400 rounded h-10 p-2 w-full"
-          />
-        </div>
         <div className="mt-1">
           <div>Password:</div>
           {error.password && (
@@ -304,20 +206,22 @@ const Signup = () => {
           </div>
         </div>
         <div
-          onClick={signUp}
+          onClick={updatePassword}
           className="w-full p-2 cursor-pointer mt-3 rounded justify-items-center border  text-center border-black hover:bg-black hover:text-white"
         >
-          Sign Up
+          Reset Password
         </div>
         <div
-          onClick={login}
+          onClick={() => {
+            navigate("/login");
+          }}
           className="text-center block text-sm mt-1  cursor-pointer"
         >
-          Have an account? <a className="text-blue-700">Login</a>
+          <a className="text-blue-700">Login</a>
         </div>
       </div>
     </div>
   );
 };
 
-export default Signup;
+export default ForgotPassword;

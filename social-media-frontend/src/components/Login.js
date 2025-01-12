@@ -121,7 +121,7 @@ const Login = () => {
             )}
           </div>
         </div>
-        <a className="underline text-xs text-blue-700 cursor-pointer">
+        <a href="/forgotPassword" className="underline text-xs text-blue-700 cursor-pointer">
           Forgot Password?
         </a>
         <div
