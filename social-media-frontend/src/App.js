@@ -17,6 +17,7 @@ import ErrorPage from "./components/ErrorPage";
 import Activate from "./components/Activate";
 import ForgotPassword from "./components/ForgotPassword";
 import ForgotPasswordReq from "./components/ForgotPasswordReq";
+import TFA from "./components/TFA";
 
 const App = () => {
   const [posts, setPosts] = useState(null);
@@ -196,6 +197,7 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/activate" element={<Activate />} />
               <Route path="/activate/:token" element={<Activate />} />
+              <Route path="/tfa" element={<TFA />} />
               <Route path="/forgotpassword/" element={<ForgotPasswordReq />} />
               <Route path="/forgotpassword/:token" element={<ForgotPassword />} />
               <Route

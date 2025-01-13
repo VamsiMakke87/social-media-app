@@ -30,15 +30,24 @@ const Login = () => {
 
         if (res.ok) {
           const data = await res.json();
-          localStorage.setItem("token", data.token);
-          setSuccessMsg('Login Successfull');
-          await loadApp(data.token);
-          navigate("/");
-        }else if(res.status=== 403){
-          setErrorMsg("Account not activated, please activate your account to login");
-          navigate('/activate');
-        }
-         else {
+          if (data.isTfaOn) {
+            navigate("/tfa", {
+              state: {
+                token: data.token,
+              },
+            });
+          } else {
+            localStorage.setItem("token", data.token);
+            setSuccessMsg("Login Successfull");
+            await loadApp(data.token);
+            navigate("/");
+          }
+        } else if (res.status === 403) {
+          setErrorMsg(
+            "Account not activated, please activate your account to login"
+          );
+          navigate("/activate");
+        } else {
           setErrorMsg("Invalid Credentials");
         }
       } else {
@@ -76,7 +85,11 @@ const Login = () => {
         <div className="text-6xl  font-bold p-4 text-center">Login</div>
         <div className="mt-2">
           <div>Email:</div>
-          {error && <div className="text-red-700 text-sm">{"Please enter valid email address"}</div>}
+          {error && (
+            <div className="text-red-700 text-sm">
+              {"Please enter valid email address"}
+            </div>
+          )}
           <input
             type="email"
             ref={emailRef}
@@ -121,7 +134,10 @@ const Login = () => {
             )}
           </div>
         </div>
-        <a href="/forgotPassword" className="underline text-xs text-blue-700 cursor-pointer">
+        <a
+          href="/forgotPassword"
+          className="underline text-xs text-blue-700 cursor-pointer"
+        >
           Forgot Password?
         </a>
         <div
@@ -137,7 +153,9 @@ const Login = () => {
           Create account
         </a>
         <a
-          onClick={()=>{navigate('/activate')}}
+          onClick={() => {
+            navigate("/activate");
+          }}
           className="text-center text-blue-700 block text-sm mt-1  cursor-pointer"
         >
           Activate account

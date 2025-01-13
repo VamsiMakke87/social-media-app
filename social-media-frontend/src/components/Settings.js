@@ -1,18 +1,29 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import AppContext from "../AppContext";
+import ToggleOffOutlinedIcon from "@mui/icons-material/ToggleOffOutlined";
+import ToggleOnOutlinedIcon from "@mui/icons-material/ToggleOnOutlined";
 
 const Settings = () => {
   const [content, setContent] = useState("profile");
-  const { loggedInUser, getReq, putReqFile, putReq, loadUser, setErrorMsg, setSuccessMsg } =
-    useContext(AppContext);
+  const {
+    loggedInUser,
+    getReq,
+    putReqFile,
+    putReq,
+    loadUser,
+    setErrorMsg,
+    setSuccessMsg,
+  } = useContext(AppContext);
   const [file, setFile] = useState(null);
   const [editUsername, setEditUsername] = useState();
+  const [toggleTFAState, setToggleTFAState] = useState(false);
   const usernameRef = useRef();
   const [profilePic, setProfilePic] = useState();
 
   useEffect(() => {
     if (loggedInUser) {
       setProfilePic(loggedInUser.profilePic);
+      setToggleTFAState(loggedInUser.isTfaOn);
     }
   }, [loggedInUser]);
 
@@ -20,7 +31,7 @@ const Settings = () => {
     setContent("profile");
   };
 
-  const changePasswordClickHandler = () => {
+  const securityClickHandler = () => {
     setContent("changePassword");
   };
 
@@ -52,7 +63,7 @@ const Settings = () => {
       const res = await putReqFile("/api/users/profilepic", formData);
       if (res.ok) {
         setFile(null);
-        setSuccessMsg('Profile Picture updated successfully');
+        setSuccessMsg("Profile Picture updated successfully");
         await loadUser(loggedInUser._id);
       }
     }
@@ -79,7 +90,7 @@ const Settings = () => {
     if (newUsername && newUsername.length > 2) {
       try {
         // console.log(usernameExists(newUsername));
-        if (!await usernameExists(newUsername)) {
+        if (!(await usernameExists(newUsername))) {
           const res = await putReq(`/api/users/${loggedInUser._id}`, {
             userId: loggedInUser._id,
             username: newUsername,
@@ -87,7 +98,7 @@ const Settings = () => {
 
           if (res.ok) {
             setEditUsername(false);
-            setSuccessMsg('Username updated successfully');
+            setSuccessMsg("Username updated successfully");
             await loadUser(loggedInUser._id);
           }
         } else {
@@ -102,6 +113,27 @@ const Settings = () => {
     }
   };
 
+  const toggleTFA = async () => {
+    try {
+      const res = await putReq("/api/users/toggleTFA", {
+        userId: loggedInUser._id,
+        tfa: !toggleTFAState,
+      });
+      if (res.ok) {
+        if (toggleTFAState) {
+          setSuccessMsg("TFA turned off successfully");
+        } else {
+          setSuccessMsg("TFA turned on successfully");
+        }
+        setToggleTFAState(!toggleTFAState);
+      } else {
+        setErrorMsg("Operation Failed! Please try again.");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     loggedInUser && (
       <div className="flex m-10 space-x-2">
@@ -113,10 +145,10 @@ const Settings = () => {
             Profile
           </a>
           <a
-            onClick={changePasswordClickHandler}
+            onClick={securityClickHandler}
             className="block bg-white p-1 rounded hover:bg-slate-100 cursor-pointer"
           >
-            Change Password
+            Security & Privacy
           </a>
         </div>
         <div className="bg-slate-200 border h-fit rounded p-2 w-8/12">
@@ -195,7 +227,23 @@ const Settings = () => {
               </div>
             </div>
           ) : (
-            <>Change Password</>
+            <div className="p-2">
+              <div className="flex border-b border-slate-600 pr-2 pb-2">
+                <div>Two-Factor Authentication</div>
+                <div className="ml-auto cursor-pointer" onClick={toggleTFA}>
+                  {toggleTFAState ? (
+                    <ToggleOnOutlinedIcon />
+                  ) : (
+                    <ToggleOffOutlinedIcon />
+                  )}
+                </div>
+              </div>
+              <div className="mt-2">
+                Click{" "}
+                <a className="text-blue-800 cursor-pointer underline">here</a>{" "}
+                to send reset password link
+              </div>
+            </div>
           )}
         </div>
       </div>
