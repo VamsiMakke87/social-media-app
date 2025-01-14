@@ -21,6 +21,8 @@ const TFA = () => {
     if (location.state) {
       setToken(location.state.token);
       setSuccessMsg("Please click resend OTP to request for an OTP");
+    } else {
+      navigate("/login");
     }
   }, []);
 
