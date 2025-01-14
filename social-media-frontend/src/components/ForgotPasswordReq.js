@@ -4,7 +4,8 @@ import AppContext from "../AppContext";
 
 const ForgotPasswordReq = () => {
   const [buttonText, setButtonText] = useState("Send Reset Password Link");
-  const { getReq, putReq, setErrorMsg, setSuccessMsg } = useContext(AppContext);
+  const { postReq, putReq, setErrorMsg, setSuccessMsg } =
+    useContext(AppContext);
   const navigate = useNavigate();
   const emailRef = useRef();
   const [error, setError] = useState(null);
@@ -30,12 +31,16 @@ const ForgotPasswordReq = () => {
 
   const sendForgotPasswordLink = async () => {
     try {
+      if (buttonText === "Sending...") return;
       const email = emailRef.current.value;
       if (!email || error) {
         setErrorMsg("Please enter correct details");
       } else {
+        console.log('here');
         setButtonText("Sending...");
-        const res = await getReq(`/api/mail/sendForgotPasswordLink?email=${email}`);
+        const res = await postReq(`/api/mail/sendForgotPasswordLink`, {
+          email: email,
+        });
         if (res.ok) {
           setSuccessMsg("Reset Password Mail Sent");
           navigate("/login");
@@ -47,7 +52,7 @@ const ForgotPasswordReq = () => {
         } else {
           setErrorMsg("Error occured! Please try again");
         }
-        setButtonText("Send Activation Link");
+        setButtonText("Send Reset Password Link");
       }
     } catch (err) {
       console.log(err);

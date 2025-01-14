@@ -5,7 +5,8 @@ import AppContext from "../AppContext";
 const Activate = () => {
   const { token } = useParams();
   const [buttonText, setButtonText] = useState("Send Activation Link");
-  const { getReq, putReq, setErrorMsg, setSuccessMsg } = useContext(AppContext);
+  const { postReq, putReq, setErrorMsg, setSuccessMsg } =
+    useContext(AppContext);
   const navigate = useNavigate();
   const emailRef = useRef();
   const [error, setError] = useState(null);
@@ -51,12 +52,15 @@ const Activate = () => {
 
   const sendActivationLink = async () => {
     try {
+      if (buttonText === "Sending...") return;
       const email = emailRef.current.value;
       if (!email || error) {
         setErrorMsg("Please enter correct details");
       } else {
         setButtonText("Sending...");
-        const res = await getReq(`/api/mail/sendActivationLink?email=${email}`);
+        const res = await postReq(`/api/mail/sendActivationLink`, {
+          email: email,
+        });
         if (res.ok) {
           setSuccessMsg("Activation Mail Sent");
           navigate("/login");
