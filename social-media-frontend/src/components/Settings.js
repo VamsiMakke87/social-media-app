@@ -2,12 +2,14 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import AppContext from "../AppContext";
 import ToggleOffOutlinedIcon from "@mui/icons-material/ToggleOffOutlined";
 import ToggleOnOutlinedIcon from "@mui/icons-material/ToggleOnOutlined";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const [content, setContent] = useState("profile");
   const {
     loggedInUser,
     getReq,
+    postReq,
     putReqFile,
     putReq,
     loadUser,
@@ -19,6 +21,7 @@ const Settings = () => {
   const [toggleTFAState, setToggleTFAState] = useState(false);
   const usernameRef = useRef();
   const [profilePic, setProfilePic] = useState();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (loggedInUser) {
@@ -134,6 +137,22 @@ const Settings = () => {
     }
   };
 
+  const sendResetPasswordLink = async () => {
+    try {
+      const res = await postReq(`/api/mail/sendForgotPasswordLink`, {
+        email: loggedInUser.email,
+      });
+      if (res.ok) {
+        setSuccessMsg("Reset Password Mail Sent");
+        navigate("/logout");
+      } else {
+        setErrorMsg("Error occured! Please try again");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     loggedInUser && (
       <div className="flex m-10 space-x-2">
@@ -239,9 +258,19 @@ const Settings = () => {
                 </div>
               </div>
               <div className="mt-2">
-                Click{" "}
-                <a className="text-blue-800 cursor-pointer underline">here</a>{" "}
-                to send reset password link
+                <div>
+                  Click{" "}
+                  <a
+                    onClick={sendResetPasswordLink}
+                    className="text-blue-800 cursor-pointer underline"
+                  >
+                    here
+                  </a>{" "}
+                  to send reset password link
+                </div>
+                <div className="text-sm">
+                  You will be logged out of your account
+                </div>
               </div>
             </div>
           )}
