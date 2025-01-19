@@ -17,9 +17,11 @@ const Settings = () => {
     setSuccessMsg,
   } = useContext(AppContext);
   const [file, setFile] = useState(null);
-  const [editUsername, setEditUsername] = useState();
+  const [editUsername, setEditUsername] = useState(false);
+  const [editEmail, setEditEmail] = useState(false);
   const [toggleTFAState, setToggleTFAState] = useState(false);
   const usernameRef = useRef();
+  const emailRef = useRef();
   const [profilePic, setProfilePic] = useState();
   const navigate = useNavigate();
 
@@ -89,8 +91,11 @@ const Settings = () => {
 
   const updateUsername = async () => {
     const newUsername = usernameRef.current.value;
-
-    if (newUsername && newUsername.length > 2) {
+    if (!/^[a-zA-Z0-9]{3,15}$/.test(newUsername)) {
+      setErrorMsg(
+        "Username must contain only 3 to 10 alphanumeric characters."
+      );
+    } else {
       try {
         // console.log(usernameExists(newUsername));
         if (!(await usernameExists(newUsername))) {
@@ -111,8 +116,6 @@ const Settings = () => {
         console.log(err);
         setErrorMsg("Operation Unsuccessfull, Please try again");
       }
-    } else {
-      setErrorMsg("Username must be between 3 and 20 characters long.");
     }
   };
 
@@ -172,77 +175,97 @@ const Settings = () => {
         </div>
         <div className="bg-slate-200 border h-fit rounded p-2 w-8/12">
           {content === "profile" ? (
-            <div className="justify-items-center">
-              <img className="rounded-full h-32 w-32 " src={profilePic} />
-              <input
-                type="file"
-                id="file-upload"
-                accept=".jpg, .jpeg, .png"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-              <a
-                onClick={uploadFileClick}
-                className="text-sm underline cursor-pointer"
-              >
-                Edit&nbsp;Profile&nbsp;Picture
-              </a>
-              {file && (
-                <div className="flex space-x-2">
-                  <div
-                    onClick={updateProfilePic}
-                    className="cursor-pointer p-1 px-4 border border-black rounded hover:bg-black hover:text-white"
-                  >
-                    Save
-                  </div>
-                  <div
-                    onClick={cancelPicture}
-                    className="cursor-pointer p-1 px-4 border border-black rounded hover:bg-black hover:text-white"
-                  >
-                    Cancel
-                  </div>
-                </div>
-              )}
-              <div className="flex space-x-1 items-center">
-                {editUsername ? (
-                  <div className="justify-items-center">
-                    <input
-                      ref={usernameRef}
-                      type="text"
-                      placeholder="Enter Username"
-                      className="block"
-                    />
-
-                    <a
-                      onClick={updateUsername}
-                      className="text-xs cursor-pointer underline"
+            <div>
+              <div className="justify-items-center">
+                <img className="rounded-full h-32 w-32 " src={profilePic} />
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept=".jpg, .jpeg, .png"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+                <a
+                  onClick={uploadFileClick}
+                  className="text-sm underline cursor-pointer"
+                >
+                  Edit&nbsp;Profile&nbsp;Picture
+                </a>
+                {file && (
+                  <div className="flex space-x-2">
+                    <div
+                      onClick={updateProfilePic}
+                      className="cursor-pointer p-1 px-4 border border-black rounded hover:bg-black hover:text-white"
                     >
                       Save
-                    </a>
-                    <a
-                      onClick={() => {
-                        setEditUsername(false);
-                      }}
-                      className="text-xs ml-1 cursor-pointer underline"
+                    </div>
+                    <div
+                      onClick={cancelPicture}
+                      className="cursor-pointer p-1 px-4 border border-black rounded hover:bg-black hover:text-white"
                     >
                       Cancel
-                    </a>
-                  </div>
-                ) : (
-                  <>
-                    <div className="font-bold text-xl">
-                      {loggedInUser.username}{" "}
                     </div>
-                    <a
-                      onClick={() => {
-                        setEditUsername(true);
-                      }}
-                      className="text-xs cursor-pointer underline"
-                    >
-                      (Edit)
-                    </a>
-                  </>
+                  </div>
                 )}
+              </div>
+              <div className="my-2">
+                <div className="md:flex items-center py-2 border-b mb-2 border-slate-600">
+                  <div className="font-bold mr-2 w-2/12">Username:</div>
+                    {editUsername ? (
+                      <input
+                        className="h-full  p-1 bg-inherit border border-black rounded-sm"
+                        type="text"
+                        ref={usernameRef}
+                      />
+                    ) : (
+                      <a>{loggedInUser.username}</a>
+                    )}
+
+                  <div className="ml-auto cursor-pointer mr-2">
+                    {editUsername ? (
+                      <div className=" flex space-x-2">
+                        <a
+                          className="underline"
+                          onClick={() => setEditUsername(false)}
+                        >
+                          Cancel
+                        </a>
+                        <a onClick={updateUsername} className="underline">
+                          Save
+                        </a>
+                      </div>
+                    ) : (
+                      <a onClick={() => setEditUsername(true)}>Edit</a>
+                    )}
+                  </div>
+                </div>
+                <div className="md:flex items-center">
+                  <div className="font-bold mr-2 w-2/12">Email:</div>
+                  {editEmail ? (
+                    <input
+                      className="h-full p-1 bg-inherit border border-black rounded-sm"
+                      type="text"
+                      ref={emailRef}
+                    />
+                  ) : (
+                    <a>{loggedInUser.email}</a>
+                  )}
+                  <div className="ml-auto cursor-pointer mr-2">
+                    {editEmail ? (
+                      <div className=" flex space-x-2">
+                        <a
+                          className="underline"
+                          onClick={() => setEditEmail(false)}
+                        >
+                          Cancel
+                        </a>
+                        <a className="underline">Save</a>
+                      </div>
+                    ) : (
+                      <a onClick={() => setEditEmail(true)}>Edit</a>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           ) : (
