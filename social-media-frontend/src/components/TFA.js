@@ -64,15 +64,15 @@ const TFA = () => {
     return oneTimePassword;
   }
 
-  const sendOtpLink = async () => {
+  const sendOtp = async () => {
     try {
       if (!setResendEnable) return;
+      setResendEnable(false);
       const genOtp = generateOTP();
       localStorage.setItem("otpLastSentTime", Date.now());
       setTimer(30);
-      setResendEnable(false);
 
-      const res = await postReq("/api/mail/sendOTP", {
+      const res = await postReq("/api/mail/sendLoginOTP", {
         email: location.state.email,
         otp: genOtp,
       });
@@ -107,7 +107,9 @@ const TFA = () => {
     <div className="bg-slate-100 h-screen flex items-center  justify-center">
       <div className="p-6 bg-white h-fit mt-10 border rounded shadow-xl md:w-4/12 w-10/12">
         <div className="mt-2">
-          <div>Enter OTP:</div>
+          <div>
+            Enter OTP: <a className="text-sm">(Please do no refresh the page)</a>
+          </div>
           <input
             type="number"
             ref={optRef}
@@ -122,7 +124,7 @@ const TFA = () => {
         </div>
         <div className="text-center block text-sm mt-1">
           {resendEnable ? (
-            <a onClick={sendOtpLink} className={`text-blue-700 cursor-pointer`}>
+            <a onClick={sendOtp} className={`text-blue-700 cursor-pointer`}>
               Resend OTP
             </a>
           ) : (

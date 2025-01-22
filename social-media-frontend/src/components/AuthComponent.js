@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import AppContext from "../AppContext";
 
 const AuthComponent = ({ children }) => {
   const isAuthenticated = localStorage.getItem("token");
+   const {setErrorMsg} = useContext(AppContext);
   const isTokenExpired = (token) => {
     try {
       const decoded = jwtDecode(token);
@@ -22,7 +24,7 @@ const AuthComponent = ({ children }) => {
     return <Navigate to="/login" replace />;
   } else {
     if (isTokenExpired(isAuthenticated)) {
-      alert("Your session has expired. Please log in again.");
+      setErrorMsg('Session Expired, Please login again');
       return <Navigate to="/logout" replace />;
     }
   }

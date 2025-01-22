@@ -119,8 +119,53 @@ const Settings = () => {
     }
   };
 
+  const emailExists = async (email) => {
+    try {
+      const res = await getReq(`/api/auth/exists?email=${email}`);
+      if (res.ok) {
+        const data = await res.json();
+        return data.isExists;
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      setErrorMsg("Operation Unsuccessfull, please try again");
+      return false;
+    }
+  };
+
+  const updateEmail = async () => {
+    const newEmail = emailRef.current.value;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+      setErrorMsg("Please enter valid email format");
+    } else {
+      try {
+        // console.log(usernameExists(newUsername));
+        if (!(await emailExists(newEmail))) {
+          // const res = await putReq(`/api/users/${loggedInUser._id}`, {
+          //   userId: loggedInUser._id,
+          //   email: newEmail,
+          // });
+
+          // if (res.ok) {
+          //   setEditUsername(false);
+          //   setSuccessMsg("Email updated successfully");
+          //   await loadUser(loggedInUser._id);
+          // }
+          setSuccessMsg(newEmail);
+        } else {
+          setErrorMsg("Email already exists");
+        }
+      } catch (err) {
+        console.log(err);
+        setErrorMsg("Operation Unsuccessfull, Please try again");
+      }
+    }
+  };
+
   const toggleTFA = async () => {
     try {
+      setToggleTFAState(!toggleTFAState);
       const res = await putReq("/api/users/toggleTFA", {
         userId: loggedInUser._id,
         tfa: !toggleTFAState,
@@ -131,8 +176,8 @@ const Settings = () => {
         } else {
           setSuccessMsg("TFA turned on successfully");
         }
-        setToggleTFAState(!toggleTFAState);
       } else {
+        setToggleTFAState(!toggleTFAState);
         setErrorMsg("Operation Failed! Please try again.");
       }
     } catch (err) {
@@ -211,28 +256,21 @@ const Settings = () => {
               <div className="my-2">
                 <div className="md:flex items-center py-2 border-b mb-2 border-slate-600">
                   <div className="font-bold mr-2 w-2/12">Username:</div>
-                    {editUsername ? (
-                      <input
-                        className="h-full  p-1 bg-inherit border border-black rounded-sm"
-                        type="text"
-                        ref={usernameRef}
-                      />
-                    ) : (
-                      <a>{loggedInUser.username}</a>
-                    )}
+                  {editUsername ? (
+                    <input
+                      className="h-full  p-1 bg-inherit border border-black rounded-sm"
+                      type="text"
+                      ref={usernameRef}
+                    />
+                  ) : (
+                    <a>{loggedInUser.username}</a>
+                  )}
 
                   <div className="ml-auto cursor-pointer mr-2">
                     {editUsername ? (
                       <div className=" flex space-x-2">
-                        <a
-                          className="underline"
-                          onClick={() => setEditUsername(false)}
-                        >
-                          Cancel
-                        </a>
-                        <a onClick={updateUsername} className="underline">
-                          Save
-                        </a>
+                        <a onClick={() => setEditUsername(false)}>Cancel</a>
+                        <a onClick={updateUsername}>Save</a>
                       </div>
                     ) : (
                       <a onClick={() => setEditUsername(true)}>Edit</a>
@@ -253,13 +291,8 @@ const Settings = () => {
                   <div className="ml-auto cursor-pointer mr-2">
                     {editEmail ? (
                       <div className=" flex space-x-2">
-                        <a
-                          className="underline"
-                          onClick={() => setEditEmail(false)}
-                        >
-                          Cancel
-                        </a>
-                        <a className="underline">Save</a>
+                        <a onClick={() => setEditEmail(false)}>Cancel</a>
+                        <a onClick={updateEmail}>Save</a>
                       </div>
                     ) : (
                       <a onClick={() => setEditEmail(true)}>Edit</a>
