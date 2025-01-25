@@ -16,12 +16,14 @@ const Settings = () => {
     setErrorMsg,
     setSuccessMsg,
   } = useContext(AppContext);
+  const [otp, setOtp] = useState();
   const [file, setFile] = useState(null);
   const [editUsername, setEditUsername] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [toggleTFAState, setToggleTFAState] = useState(false);
   const usernameRef = useRef();
   const emailRef = useRef();
+  const otpRef = useRef();
   const [profilePic, setProfilePic] = useState();
   const navigate = useNavigate();
 
@@ -65,11 +67,13 @@ const Settings = () => {
       const formData = new FormData();
       formData.append("userId", loggedInUser._id);
       formData.append("file", file);
+      setFile(null);
       const res = await putReqFile("/api/users/profilepic", formData);
       if (res.ok) {
-        setFile(null);
         setSuccessMsg("Profile Picture updated successfully");
         await loadUser(loggedInUser._id);
+      } else {
+        setErrorMsg("Cannot Update Profile Picture. Please try again later.");
       }
     }
   };
@@ -121,40 +125,94 @@ const Settings = () => {
 
   const emailExists = async (email) => {
     try {
-      const res = await getReq(`/api/auth/exists?email=${email}`);
-      if (res.ok) {
-        const data = await res.json();
-        return data.isExists;
+      if (validateEmail()) {
+        const res = await getReq(`/api/auth/exists?email=${email}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.isExists) {
+            setErrorMsg("Email already exists");
+          }
+          return data.isExists;
+        } else {
+          throw new Error();
+        }
       } else {
-        throw new Error();
+        return true;
       }
     } catch (err) {
       setErrorMsg("Operation Unsuccessfull, please try again");
+      return true;
+    }
+  };
+
+  const validateEmail = () => {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailRef.current.value)) {
+      // console.log(email);
+      setErrorMsg("Please enter valid email format");
       return false;
     }
+    return true;
+  };
+
+  const generateOTP = () => {
+    const digits = "0123456789";
+    let oneTimePassword = "";
+
+    for (let i = 0; i < 6; i++) {
+      oneTimePassword += digits[Math.floor(Math.random() * digits.length)];
+    }
+
+    setOtp(oneTimePassword);
+    return oneTimePassword;
+  };
+
+  const sendOTP = async () => {
+    const email = emailRef.current.value;
+    if (!(await emailExists(email))) {
+      const changeMailOtp = generateOTP();
+
+      const res = await postReq(`/api/mail/sendChangeEmailOTP`, {
+        email: email,
+        username: loggedInUser.username,
+        otp: changeMailOtp,
+      });
+      if (res.ok) {
+        setSuccessMsg(`OTP sent to ${email}`);
+      } else {
+        setErrorMsg("Error occured! Please try again later");
+      }
+    }
+  };
+
+  const verifyOTP = () => {
+    const otpValue = otpRef.current.value;
+    return otpValue && otpValue === otp;
   };
 
   const updateEmail = async () => {
     const newEmail = emailRef.current.value;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
-      setErrorMsg("Please enter valid email format");
-    } else {
+    if (validateEmail()) {
       try {
         // console.log(usernameExists(newUsername));
-        if (!(await emailExists(newEmail))) {
-          // const res = await putReq(`/api/users/${loggedInUser._id}`, {
-          //   userId: loggedInUser._id,
-          //   email: newEmail,
-          // });
+        if (verifyOTP()) {
+          if (!(await emailExists(newEmail))) {
+            setEditEmail(false);
+            setSuccessMsg("Email updated successfully");
+            const res = await putReq(`/api/users/${loggedInUser._id}`, {
+              userId: loggedInUser._id,
+              email: newEmail,
+            });
 
-          // if (res.ok) {
-          //   setEditUsername(false);
-          //   setSuccessMsg("Email updated successfully");
-          //   await loadUser(loggedInUser._id);
-          // }
-          setSuccessMsg(newEmail);
+            if (res.ok) {
+              await loadUser(loggedInUser._id);
+            } else {
+              setErrorMsg("Error occured! Please try again");
+            }
+          } else {
+            setErrorMsg("Email already exists");
+          }
         } else {
-          setErrorMsg("Email already exists");
+          setErrorMsg("Invalid OTP");
         }
       } catch (err) {
         console.log(err);
@@ -257,47 +315,101 @@ const Settings = () => {
                 <div className="md:flex items-center py-2 border-b mb-2 border-slate-600">
                   <div className="font-bold mr-2 w-2/12">Username:</div>
                   {editUsername ? (
-                    <input
-                      className="h-full  p-1 bg-inherit border border-black rounded-sm"
-                      type="text"
-                      ref={usernameRef}
-                    />
-                  ) : (
-                    <a>{loggedInUser.username}</a>
-                  )}
-
-                  <div className="ml-auto cursor-pointer mr-2">
-                    {editUsername ? (
-                      <div className=" flex space-x-2">
-                        <a onClick={() => setEditUsername(false)}>Cancel</a>
-                        <a onClick={updateUsername}>Save</a>
+                    <>
+                      <div className="md:flex justify-between items-center">
+                        <input
+                          className="h-full p-1 bg-inherit border border-black rounded-sm"
+                          type="text"
+                          ref={usernameRef}
+                        />
                       </div>
-                    ) : (
-                      <a onClick={() => setEditUsername(true)}>Edit</a>
-                    )}
-                  </div>
+
+                      <div className="ml-auto flex space-x-2">
+                        <a
+                          className="underline cursor-pointer"
+                          onClick={() => setEditUsername(false)}
+                        >
+                          Cancel
+                        </a>
+                        <a
+                          className="underline cursor-pointer"
+                          onClick={updateUsername}
+                        >
+                          Save
+                        </a>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <a>{loggedInUser.username}</a>
+                      <div
+                        onClick={() => {
+                          setEditUsername(true);
+                        }}
+                        className="ml-auto cursor-pointer mr-2"
+                      >
+                        Edit
+                      </div>
+                    </>
+                  )}
                 </div>
-                <div className="md:flex items-center">
+                <div className="md:flex items-center py-2 ">
                   <div className="font-bold mr-2 w-2/12">Email:</div>
                   {editEmail ? (
-                    <input
-                      className="h-full p-1 bg-inherit border border-black rounded-sm"
-                      type="text"
-                      ref={emailRef}
-                    />
-                  ) : (
-                    <a>{loggedInUser.email}</a>
-                  )}
-                  <div className="ml-auto cursor-pointer mr-2">
-                    {editEmail ? (
-                      <div className=" flex space-x-2">
-                        <a onClick={() => setEditEmail(false)}>Cancel</a>
-                        <a onClick={updateEmail}>Save</a>
+                    <>
+                      <div className="md:flex justify-between items-center">
+                        <input
+                          className="h-full p-1 bg-inherit border border-black rounded-sm"
+                          type="text"
+                          ref={emailRef}
+                        />
                       </div>
-                    ) : (
-                      <a onClick={() => setEditEmail(true)}>Edit</a>
-                    )}
-                  </div>
+
+                      <div className="ml-auto flex space-x-2">
+                        <a
+                          className="underline cursor-pointer"
+                          onClick={() => setEditEmail(false)}
+                        >
+                          Cancel
+                        </a>
+                        <a
+                          className="underline cursor-pointer"
+                          onClick={updateEmail}
+                        >
+                          Save
+                        </a>
+                      </div>
+                      <div className="md:flex justify-between items-center mt-2">
+                        <input
+                          className="h-full p-1 bg-inherit border border-black rounded-sm"
+                          type="number"
+                          placeholder="Enter OTP"
+                          ref={otpRef}
+                        />
+                      </div>
+
+                      <div className="ml-auto flex space-x-2">
+                        <a
+                          className="underline cursor-pointer"
+                          onClick={sendOTP}
+                        >
+                          Send OTP
+                        </a>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <a>{loggedInUser.email}</a>
+                      <div
+                        onClick={() => {
+                          setEditEmail(true);
+                        }}
+                        className="ml-auto cursor-pointer mr-2"
+                      >
+                        Edit
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
