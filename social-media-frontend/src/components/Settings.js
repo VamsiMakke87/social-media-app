@@ -261,8 +261,8 @@ const Settings = () => {
 
   return (
     loggedInUser && (
-      <div className="flex m-10 space-x-2">
-        <div className="w-4/12 md:w-3/12 h-fit bg-white shadow-md rounded p-4">
+      <div className="md:flex justify-items-center m-10 space-x-2">
+        <div className="w-10/12 md:w-3/12 h-fit bg-white shadow-md mb-2 rounded p-4">
           <a
             onClick={profileClickHandler}
             className="block bg-white p-1 rounded hover:bg-slate-100 cursor-pointer"
@@ -276,7 +276,7 @@ const Settings = () => {
             Security & Privacy
           </a>
         </div>
-        <div className="bg-slate-200 border h-fit rounded p-2 w-8/12">
+        <div className="bg-slate-200 border h-fit rounded p-2 w-10/12 md:w-8/12">
           {content === "profile" ? (
             <div>
               <div className="justify-items-center">
@@ -315,7 +315,7 @@ const Settings = () => {
                 <div className="md:flex items-center py-2 border-b mb-2 border-slate-600">
                   <div className="font-bold mr-2 w-2/12">Username:</div>
                   {editUsername ? (
-                    <>
+                    <div>
                       <div className="md:flex justify-between items-center">
                         <input
                           className="h-full p-1 bg-inherit border border-black rounded-sm"
@@ -338,7 +338,7 @@ const Settings = () => {
                           Save
                         </a>
                       </div>
-                    </>
+                    </div>
                   ) : (
                     <>
                       <a>{loggedInUser.username}</a>
@@ -356,7 +356,7 @@ const Settings = () => {
                 <div className="md:flex items-center py-2 ">
                   <div className="font-bold mr-2 w-2/12">Email:</div>
                   {editEmail ? (
-                    <>
+                    <div>
                       <div className="md:flex justify-between items-center">
                         <input
                           className="h-full p-1 bg-inherit border border-black rounded-sm"
@@ -396,7 +396,7 @@ const Settings = () => {
                           Send OTP
                         </a>
                       </div>
-                    </>
+                    </div>
                   ) : (
                     <>
                       <a>{loggedInUser.email}</a>
