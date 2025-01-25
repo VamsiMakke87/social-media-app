@@ -17,6 +17,7 @@ const Settings = () => {
     setSuccessMsg,
   } = useContext(AppContext);
   const [otp, setOtp] = useState();
+  const [deleteAccount, setDeleteAccount] = useState(false);
   const [file, setFile] = useState(null);
   const [editUsername, setEditUsername] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
@@ -425,7 +426,7 @@ const Settings = () => {
                   )}
                 </div>
               </div>
-              <div className="mt-2">
+              <div className="mt-2 border-b border-slate-600 pb-2">
                 <div>
                   Click{" "}
                   <a
@@ -440,6 +441,30 @@ const Settings = () => {
                   You will be logged out of your account
                 </div>
               </div>
+              <div
+                onClick={() => {
+                  setDeleteAccount(true);
+                }}
+                className="text-center w-full mt-2 border border-red-600 rounded-lg py-2 text-red-600 hover:bg-red-600 hover:text-white cursor-pointer"
+              >
+                Delete Account
+              </div>
+              {deleteAccount && (
+                <div className="mt-2 flex space-x-1 justify-center items-center">
+                  <div>Are you sure?</div>
+                  <div
+                    onClick={() => {
+                      setDeleteAccount(false);
+                    }}
+                    className="w-2/5 py-1 text-center  border border-black rounded-lg cursor-pointer"
+                  >
+                    No
+                  </div>
+                  <div className="w-2/5 text-center border rounded-lg border-red-600 py-1 text-red-600 hover:bg-red-600 hover:text-white cursor-pointer">
+                    Yes
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
