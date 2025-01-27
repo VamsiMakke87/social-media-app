@@ -27,13 +27,13 @@ const Comment = (props) => {
   const [deleteCommentMenu, setDeleteCommentMenu] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (loggedInUser) {
-      (async () => {
-        await loadReplies();
-      })();
-    }
-  }, [loggedInUser]);
+  // useEffect(() => {
+  //   if (loggedInUser) {
+  //     (async () => {
+  //       await loadReplies();
+  //     })();
+  //   }
+  // }, [loggedInUser]);
 
   useEffect(() => {
     if (props.targetId) {

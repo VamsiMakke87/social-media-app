@@ -33,9 +33,9 @@ const Post = (props) => {
         setCommentClicked(true);
       }
       setLiked(post?.likes.includes(loggedInUser._id));
-      (async () => {
-        await loadComments();
-      })();
+      // (async () => {
+      //   await loadComments();
+      // })();
     }
   }, [loggedInUser, location.state?.post]);
 
